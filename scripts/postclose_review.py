@@ -400,7 +400,7 @@ def _compute_stock_metrics(
     metrics = {}
     for _, row in limit_up.iterrows():
         code = row["code"]
-        name = row["name"]
+        name = _normalize_name(row["name"])
         code_short = _code_normalize(code)
         flow = flow_lookup.get(code_short, {})
         prev = prev_lookup.get(code_short, {})
@@ -445,7 +445,7 @@ def volume_price_ruling(m: dict) -> str:
         return "收跌掉队" if pct <= 0 else "价格承接但资金流出"
     if prev_t and prev_t > 0:
         vol_ratio = turnover / prev_t
-        if vol_ratio < 0.8 and break_cnt == 0:
+        if vol_ratio < 0.8 and break_cnt == 0 and turnover < 10:
             return "缩量锁筹"
         if turnover > 25:
             return "封板强但资金流出" if net_flow < 0 else "高换手封板"
@@ -459,12 +459,30 @@ def volume_price_ruling(m: dict) -> str:
     return "放量/温和封板"
 
 
+def _normalize_name(name: str) -> str:
+    """Convert full-width ASCII chars to half-width for consistent matching."""
+    result = []
+    for ch in str(name):
+        code = ord(ch)
+        if 0xFF01 <= code <= 0xFF5E:
+            result.append(chr(code - 0xFEE0))
+        elif code == 0x3000:
+            result.append(' ')
+        else:
+            result.append(ch)
+    return ''.join(result)
+
+
 def four_layer_classify(theme_stocks: list[str], all_metrics: dict) -> list[dict]:
     """Assign four-layer roles within a theme."""
+    # Build normalized lookup from all_metrics
+    norm_lookup = {_normalize_name(k): (k, v) for k, v in all_metrics.items()}
     members = []
     for name in theme_stocks:
-        if name in all_metrics:
-            m = all_metrics[name].copy()
+        key = _normalize_name(name)
+        if key in norm_lookup:
+            orig_name, m = norm_lookup[key]
+            m = m.copy()
             m["ruling"] = volume_price_ruling(m)
             members.append(m)
     if not members:
@@ -478,13 +496,25 @@ def four_layer_classify(theme_stocks: list[str], all_metrics: dict) -> list[dict
     remaining = list(members)
     total = len(members)
 
+    def _qualifies_anchor(m):
+        """情绪锚/强度锚质量门槛：换手>2%且(资金正流入或大市值)"""
+        return m["turnover"] > 2 and (m["net_flow"] > 0 or m["float_mkt"] > 1e11)
+
     def _assign(role: str, count: int):
         nonlocal remaining
-        take = [m for i, m in enumerate(remaining) if i < count]
-        for m in take:
-            m["role"] = role
-        assigned.extend(take)
-        remaining = remaining[count:]
+        if role in ("情绪锚", "强度锚"):
+            qualified = [m for m in remaining if _qualifies_anchor(m)]
+            take = qualified[:count]
+            for m in take:
+                m["role"] = role
+                remaining.remove(m)
+            assigned.extend(take)
+        else:
+            take = [m for i, m in enumerate(remaining) if i < count]
+            for m in take:
+                m["role"] = role
+            assigned.extend(take)
+            remaining = remaining[count:]
 
     _assign("情绪锚", min(2, max(1, total // 4)))
     _assign("强度锚", min(2, max(1, total // 4)))
@@ -509,7 +539,7 @@ def consecutive_height_table(limit_up: pd.DataFrame, all_metrics: dict) -> list[
         return []
     results = []
     for _, r in high.iterrows():
-        name = r["name"]
+        name = _normalize_name(r["name"])
         m = all_metrics.get(name, {})
         results.append({
             "name": name,
@@ -785,7 +815,7 @@ def render_markdown(
         a(f"**成员池**（{len(other)}只）：")
         a()
         for name in other:
-            m = all_metrics.get(name, {})
+            m = all_metrics.get(_normalize_name(name), {})
             if m:
                 a(f"- {m['name']}：{_pct_str(m['pct_chg'])}，换手{m['turnover']:.2f}%，{m.get('industry','')}")
         a()
@@ -844,7 +874,7 @@ def render_markdown(
         a("### 旧强失败锚补充池详细")
         a()
         for fname in failures:
-            m = all_metrics.get(fname, {})
+            m = all_metrics.get(_normalize_name(fname), {})
             if m:
                 prev_t_str = f"{m.get('prev_turnover', 0):.2f}%" if m.get('prev_turnover') else "N/A"
                 a(f"- {m['name']}（{_pct_str(m['pct_chg'])}，换手{m['turnover']:.2f}%/{prev_t_str}，"
@@ -892,17 +922,36 @@ def render_markdown(
         a(f"- **{name}**：{'、'.join(stocks[:4])}")
     a()
 
-    # Section 12
+    # Section 12 — dynamic based on actual volume-price rulings
     a("## 12. 股票池更新")
     a()
     a("| 操作 | 详细 |")
     a("|------|------|")
     new_entries = []
+    downgrade = []
+    retain = []
     for theme in themes:
-        new_entries.extend(theme.get("member_stocks", [])[:3])
-    a(f"| 新补录 | {', '.join(new_entries[:10])} 等进入次日观察 |")
-    a("| 降级 | 旧半导体、旧CPO、旧算力容量标的 → 失败锚或风险边界 |")
-    a("| 保留 | 容量验证标的，若同步资金撤退则降级 |")
+        for name in theme.get("member_stocks", []):
+            m = all_metrics.get(_normalize_name(name), {})
+            ruling = m.get("ruling", "")
+            net_flow = m.get("net_flow", 0)
+            role = m.get("role", "")
+            if ruling == "封板强但资金流出" and abs(net_flow) > 5e7:
+                downgrade.append(f"{name}({ruling},{_fmt_flow(net_flow)})")
+            elif role in ("容量验证锚",) and net_flow > 0:
+                retain.append(name)
+            elif ruling not in ("封板强但资金流出",):
+                new_entries.append(name)
+    new_uniq = list(dict.fromkeys(new_entries))  # dedup preserving order
+    a(f"| 新补录 | {', '.join(new_uniq[:12])}{' 等' if len(new_uniq) > 12 else ''} 进入次日观察 |")
+    if downgrade:
+        a(f"| ⚠️ 降级 | {', '.join(downgrade[:8])} → 高位风险，移出核心观察池 |")
+    else:
+        a("| 降级 | 无触发降级条件的标的 |")
+    if retain:
+        a(f"| 保留 | {', '.join(retain[:8])} → 容量验证，资金配合 |")
+    else:
+        a("| 保留 | 容量验证标的，若同步资金撤退则降级 |")
     a()
 
     # Section 13
@@ -1058,9 +1107,9 @@ def main():
     stock_records = []
     for _, r in limit_up.iterrows():
         code = r["code"]
-        name = r["name"]
+        name = _normalize_name(r["name"])
         code_short = code.split(".")[0] if "." in str(code) else str(code).zfill(6)
-        m = all_metrics.get(name, {})
+        m = all_metrics.get(_normalize_name(name), {})
         stock_records.append({
             "code": code_short,
             "name": name,
