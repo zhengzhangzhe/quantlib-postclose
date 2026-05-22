@@ -323,15 +323,6 @@ def build_llm_context(
             lines.append(f"- {h}")
         lines.append("")
 
-    # CCTV macro news (for policy context)
-    if cctv_news:
-        lines.append(f"## 央视宏观政策（{len(cctv_news)}条，仅重大政策）")
-        for n in cctv_news[:5]:
-            key_policies = ["习近平", "国务院", "发改委", "央行", "证监会", "财政部", "政治局"]
-            if any(kw in n.get("title", "") for kw in key_policies):
-                lines.append(f"- {n['title']}")
-        lines.append("")
-
     # Xueqiu flash
     if xueqiu_flash:
         lines.append(f"## 雪球7×24快讯（{len(xueqiu_flash)}条）")
@@ -351,6 +342,16 @@ def build_llm_context(
             for t in titles[:3]:
                 lines.append(f"  - {t}")
         lines.append("")
+
+    # CCTV macro (secondary, policy-filtered, max 3)
+    if cctv_news:
+        key_policies = ["习近平", "国务院", "发改委", "央行", "证监会", "财政部", "政治局", "降准", "降息", "利率", "LPR"]
+        policy_items = [n for n in cctv_news if any(kw in n.get("title", "") for kw in key_policies)]
+        if policy_items:
+            lines.append(f"## 宏观政策参考（次要，{len(policy_items)}条）")
+            for n in policy_items[:3]:
+                lines.append(f"- {n['title']}")
+            lines.append("")
 
     # Previous day postclose — explicitly tell LLM to cover ALL these themes
     if postclose:
