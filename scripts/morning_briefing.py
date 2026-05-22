@@ -18,6 +18,13 @@ import time
 from datetime import date, datetime, timedelta
 from pathlib import Path
 
+# Import stable sector leaders mapping
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+try:
+    from scripts.sector_leaders import SECTOR_LEADERS
+except ImportError:
+    SECTOR_LEADERS = {}
+
 import requests
 
 # ── Paths ──
@@ -477,6 +484,8 @@ def render_briefing(
     if recs:
         a("| 板块 | 来源 | 操作 | 信心 | 理由 | 关注标的(代码) |")
         a("|------|------|------|------|------|------|")
+        order = {"买入": 0, "回避": 1, "关注": 2}
+        recs.sort(key=lambda r: order.get(r.get("action", ""), 9))
         for r in recs:
             action_emoji = {"买入": "🟢", "关注": "🟡", "回避": "🔴"}.get(r.get("action", ""), "⚪")
             stocks_raw = r.get("key_stocks", [])
@@ -484,10 +493,10 @@ def render_briefing(
                 stocks = "<br>".join(
                     f"{s.get('name','')}({s.get('code','')})" +
                     (f" — {s.get('note','')}" if s.get('note') else "")
-                    for s in stocks_raw[:6]
+                    for s in stocks_raw[:8]
                 )
             else:
-                stocks = "、".join(str(s) for s in stocks_raw[:6])
+                stocks = "、".join(str(s) for s in stocks_raw[:8])
             a(f"| {r.get('sector','')} | {r.get('theme_source','')} | {action_emoji} {r.get('action','')} | {r.get('confidence','')} | {r.get('reason','')} | {stocks} |")
         a()
 
@@ -650,78 +659,134 @@ def main():
                 return t.get("member_stocks", [])
         return []
 
-    def _pick_leaders(sector_name: str, count: int = 6) -> list[dict]:
-        """Data-driven leader picker: stocks explicitly in the theme's member list first,
-        then supplement with same-industry stocks.
+    def _match_sector_to_leaders(sector_name: str) -> list[tuple]:
+        """Fuzzy match sector name to SECTOR_LEADERS keys using keyword overlap."""
+        if sector_name in SECTOR_LEADERS:
+            return SECTOR_LEADERS[sector_name]
+        # Split into keywords and find best matching key
+        keywords = set(sector_name.replace("/", " ").replace("、", " ").split())
+        best_key, best_score = None, 0
+        for key in SECTOR_LEADERS:
+            key_words = set(key.replace("/", " ").replace("、", " ").split())
+            overlap = len(keywords & key_words)
+            if overlap > best_score:
+                best_score = overlap
+                best_key = key
+        if best_key and best_score >= 1:
+            return SECTOR_LEADERS[best_key]
+        # Secondary: keyword trigger table for edge cases
+        triggers = {
+            "化工": ["化学", "化工", "化纤", "钛白粉", "氟化工", "磷化工", "煤化工", "化肥"],
+            "煤炭": ["煤炭", "焦煤", "焦炭", "煤"],
+            "钢铁": ["钢铁", "钢", "特钢", "不锈钢"],
+            "农牧": ["农牧", "猪肉", "饲料", "种业", "养殖", "农业"],
+        }
+        for target, words in triggers.items():
+            for w in words:
+                if w in sector_name:
+                    return SECTOR_LEADERS.get(target, [])
+        return []
 
-        Only picks stocks from the theme's own member_stocks to avoid cross-theme
-        contamination (e.g. panel stocks in smart-driving).
+    def _pick_leaders(sector_name: str, count: int = 6) -> list[dict]:
+        """Stable leader picker: SECTOR_LEADERS base (always shown) + ZT annotations.
+
+        - Base leaders ALWAYS appear, regardless of whether they hit limit-up
+        - ZT activity adds annotation (🔥) and boosts ranking within base
+        - Non-base ZT stocks from the theme's PRIMARY industry appended as 🆕
         """
-        # Get this theme's explicit member stocks
+        active_lookup = {}
+        for code, info in stock_db.items():
+            active_lookup[code] = info
+
+        # Get theme members to determine the primary industry
         theme_members = set()
-        theme_industries = set()
         for t in (postclose or {}).get("themes", []):
             if t.get("name") == sector_name:
                 theme_members = set(t.get("member_stocks", []))
                 break
 
-        # Get industries from theme members
-        for code, info in stock_db.items():
+        # Find the primary (most common) industry among theme members
+        industry_counts = {}
+        for code, info in active_lookup.items():
             if info["name"] in theme_members and info.get("industry"):
-                theme_industries.add(info["industry"])
+                ind = info["industry"]
+                industry_counts[ind] = industry_counts.get(ind, 0) + 1
+        primary_industry = max(industry_counts, key=industry_counts.get) if industry_counts else ""
 
-        # Phase 1: explicit theme members (prioritized)
-        phase1 = []
-        for code, info in stock_db.items():
-            if info["name"] not in theme_members:
-                continue
+        base_leaders = _match_sector_to_leaders(sector_name)
+        result = []
+        used_codes = set()
+
+        # Phase 1: base leaders, filtered to main board
+        for code, name, desc in base_leaders:
             if not _is_main_board(code):
                 continue
-            is_zt = info.get("pct_chg", 0) >= 9.5
-            score = (
-                (10000 if is_zt else 0) +
-                info.get("float_mkt", 0) / 1e8 +
-                abs(info.get("net_flow", 0)) / 1e7
-            )
-            note = "前日涨停"
-            if info.get("consecutive", 1) > 1:
-                note += f"，{info['consecutive']}连板"
-            if info.get("break_cnt", 0) > 0:
-                note += "，炸板回封"
-            if not is_zt:
-                note = f"主题成分股"
-            phase1.append({"name": info["name"], "code": code, "score": score, "note": note})
+            active = active_lookup.get(code, {})
+            is_zt = active.get("pct_chg", 0) >= 9.5 if active else False
+            consecutive = active.get("consecutive", 1) if active else 0
+            break_cnt = active.get("break_cnt", 0) if active else 0
 
-        phase1.sort(key=lambda x: -x["score"])
+            if is_zt:
+                note = f"🔥 前日涨停 · {desc}"
+                if consecutive > 1:
+                    note += f"，{consecutive}连板"
+                if break_cnt > 0:
+                    note += "，炸板回封"
+                score = 1000 + active.get("float_mkt", 0) / 1e8
+            else:
+                note = f"行业龙头（昨未涨停）· {desc}"
+                score = 0
 
-        # Phase 2: supplement from same industry (only most common industry)
-        result = phase1[:count]
-        if len(result) < count and theme_industries:
-            # Use only the MOST common industry among theme members
-            industry_counts = {}
-            for code, info in stock_db.items():
-                if info["name"] in theme_members and info.get("industry"):
-                    ind = info["industry"]
-                    industry_counts[ind] = industry_counts.get(ind, 0) + 1
-            primary_industry = max(industry_counts, key=industry_counts.get) if industry_counts else ""
+            result.append({"name": name, "code": code, "score": score, "note": note})
+            used_codes.add(code)
 
-            if primary_industry:
-                phase2 = []
-                phase1_names = {r["name"] for r in result}
-                for code, info in stock_db.items():
-                    if info["name"] in phase1_names:
-                        continue
-                    if info.get("industry", "") != primary_industry:
-                        continue
-                    if not _is_main_board(code):
-                        continue
-                    note = f"同行业(流通{info.get('float_mkt',0)/1e8:.0f}亿)"
-                    score = info.get("float_mkt", 0) / 1e8 + abs(info.get("net_flow", 0)) / 1e7
-                    phase2.append({"name": info["name"], "code": code, "score": score, "note": note})
-                phase2.sort(key=lambda x: -x["score"])
-                result.extend(phase2[:count - len(result)])
+        # Sort base: ZT first, then original order
+        zt_base = [r for r in result if r["score"] > 0]
+        non_zt_base = [r for r in result if r["score"] == 0]
+        zt_base.sort(key=lambda x: -x["score"])
+        result = zt_base + non_zt_base
 
-        return [{"name": r["name"], "code": r["code"], "note": r["note"]} for r in result]
+        # Fallback: no base leaders matched → use theme members from primary industry
+        if not result and primary_industry:
+            fallback = []
+            for code, info in active_lookup.items():
+                if not _is_main_board(code):
+                    continue
+                if info.get("industry", "") != primary_industry:
+                    continue
+                is_zt = info.get("pct_chg", 0) >= 9.5
+                note = f"{'🔥 前日涨停' if is_zt else '同行业成分'} · 流通{info.get('float_mkt',0)/1e8:.0f}亿"
+                fallback.append({
+                    "name": info["name"], "code": code,
+                    "score": (1000 if is_zt else 0) + info.get("float_mkt", 0) / 1e8,
+                    "note": note,
+                })
+            fallback.sort(key=lambda x: -x["score"])
+            for f in fallback[:count]:
+                result.append(f)
+                used_codes.add(f["code"])
+
+        # Phase 2: supplement with ZT stocks from primary industry not yet in result
+        if len(result) < count and primary_industry:
+            for code, info in active_lookup.items():
+                if code in used_codes:
+                    continue
+                if len(result) >= count:
+                    break
+                if not _is_main_board(code):
+                    continue
+                if info.get("pct_chg", 0) < 9.5:
+                    continue
+                if info.get("industry", "") != primary_industry:
+                    continue
+                result.append({
+                    "name": info["name"], "code": code,
+                    "score": info.get("float_mkt", 0) / 1e8,
+                    "note": f"🆕 新晋涨停 · 流通{info.get('float_mkt',0)/1e8:.0f}亿",
+                })
+                used_codes.add(code)
+
+        return result
 
     # Replace LLM-picked stocks with data-driven picks
     for rec in llm_result.get("sector_recommendations", []):
