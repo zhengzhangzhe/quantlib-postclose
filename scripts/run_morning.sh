@@ -1,9 +1,8 @@
 #!/bin/bash
 # Morning briefing + WeChat push + git push — called by crontab at 9am weekdays
-# Usage: bash /Users/zzz/quantlib-postclose/scripts/run_morning.sh
 
-source ~/.zshrc 2>/dev/null || true
-cd /Users/zzz/quantlib-postclose
+set -e
+cd "$(dirname "$0")/.."
 
 LOG="output/morning/run.log"
 mkdir -p output/morning

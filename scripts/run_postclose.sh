@@ -1,9 +1,8 @@
 #!/bin/bash
 # Postclose review + git push — called by crontab daily after market close
-# Usage: bash /Users/zzz/quantlib-postclose/scripts/run_postclose.sh
 
-source ~/.zshrc 2>/dev/null || true
-cd /Users/zzz/quantlib-postclose
+set -e
+cd "$(dirname "$0")/.."
 
 LOG="output/postclose/run.log"
 mkdir -p output/postclose
