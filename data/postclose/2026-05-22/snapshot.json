@@ -7,86 +7,124 @@
   "index_sz": 2.2956632698402313,
   "themes": [
     {
-      "name": "元件/PCB",
-      "type": "主线",
+      "name": "全市场",
+      "type": "活口",
       "member_stocks": [
+        "金利华电",
+        "大众交通",
+        "恒林股份",
         "鹏鼎控股",
+        "格尔软件",
+        "四环生物",
+        "黄河旋风",
+        "曙光股份",
         "风华高科",
+        "博迁新材",
         "宝鼎科技",
+        "和泰机电",
+        "金隅集团",
+        "交大昂立",
+        "天承科技",
+        "合百集团",
+        "京泉华",
+        "光华科技",
+        "莲花控股",
         "艾华集团",
         "景旺电子",
+        "昀冢科技",
+        "宏和科技",
+        "狮头股份",
+        "山东玻纤",
+        "龙星科技",
+        "卓郎智能",
+        "四方达",
+        "恒盛能源",
+        "新金路",
+        "春秋电子",
+        "博杰股份",
+        "格林达",
+        "华丽家族",
         "海星股份",
+        "京投发展",
+        "华软科技",
+        "美新科技",
+        "火炬电子",
+        "飞亚达",
+        "奥康国际",
+        "华盛昌",
         "方邦股份",
         "强达电路",
         "华正新材",
         "博敏电子",
+        "锋龙股份",
+        "跃岭股份",
         "沪电股份",
-        "深南电路",
-        "生益科技",
-        "方正科技",
-        "法拉电子",
-        "红板科技"
-      ]
-    },
-    {
-      "name": "通信/光模块",
-      "type": "次主线",
-      "member_stocks": [
-        "天孚通信",
-        "新易盛",
-        "意华股份"
-      ]
-    },
-    {
-      "name": "光学光电子/面板",
-      "type": "次主线",
-      "member_stocks": [
-        "京东方A",
-        "联创电子",
-        "水晶光电"
-      ]
-    },
-    {
-      "name": "工业金属",
-      "type": "次主线",
-      "member_stocks": [
+        "科新发展",
+        "华锋股份",
+        "金瑞矿业",
+        "大连电瓷",
+        "三美股份",
+        "雄韬股份",
+        "新安股份",
+        "海鸥股份",
+        "播恩集团",
+        "科陆电子",
+        "达实智能",
+        "康平科技",
+        "九安医疗",
+        "大连热电",
+        "正川股份",
+        "双星新材",
+        "新化股份",
         "新疆众和",
+        "克来机电",
+        "三力制药",
+        "华生科技",
+        "东方钽业",
+        "中钨高新",
+        "蔚蓝锂芯",
+        "国机精工",
+        "洁美科技",
+        "智立方",
         "中金岭南",
-        "驰宏锌锗",
-        "铜陵有色"
-      ]
-    },
-    {
-      "name": "电子化学",
-      "type": "活口",
-      "member_stocks": [
-        "天承科技",
-        "光华科技",
-        "格林达"
-      ]
-    },
-    {
-      "name": "玻璃玻纤",
-      "type": "活口",
-      "member_stocks": [
-        "宏和科技",
-        "山东玻纤",
+        "鼎泰高科",
+        "元力股份",
+        "宏柏新材",
+        "深南电路",
+        "鸿远电子",
+        "东材科技",
+        "生益科技",
+        "航锦科技",
+        "民爆光电",
+        "洪田股份",
+        "湘电股份",
+        "恒通股份",
+        "巨化股份",
+        "奥海科技",
+        "水晶光电",
+        "川润股份",
+        "利和兴",
+        "瑞丰高材",
         "中材科技",
-        "南玻A"
-      ]
-    },
-    {
-      "name": "生物制品",
-      "type": "活口",
-      "member_stocks": [
-        "四环生物"
-      ]
-    },
-    {
-      "name": "智能驾驶",
-      "type": "活口",
-      "member_stocks": [
-        "联创电子"
+        "华资实业",
+        "方正科技",
+        "南  玻Ａ",
+        "凯中精密",
+        "驰宏锌锗",
+        "新 大 陆",
+        "铜陵有色",
+        "法拉电子",
+        "森林包装",
+        "盈方微",
+        "京东方Ａ",
+        "华金资本",
+        "联创电子",
+        "易明医药",
+        "福斯特",
+        "慧智微-U",
+        "三祥新材",
+        "意华股份",
+        "红板科技"
       ]
     }
   ],
@@ -1470,6 +1508,188 @@
       "first_time": "144742",
       "consecutive": 1,
       "break_cnt": 0
+    }
+  ],
+  "institute_attention": [
+    {
+      "sector_short": "化工",
+      "attention": 742,
+      "stock_count": 229,
+      "buy_ratio": 89.5
+    },
+    {
+      "sector_short": "食品饮料",
+      "attention": 657,
+      "stock_count": 66,
+      "buy_ratio": 79.5
+    },
+    {
+      "sector_short": "机械设备",
+      "attention": 643,
+      "stock_count": 342,
+      "buy_ratio": 76.1
+    },
+    {
+      "sector_short": "金融服务",
+      "attention": 462,
+      "stock_count": 52,
+      "buy_ratio": 82.4
+    },
+    {
+      "sector_short": "饮料制造",
+      "attention": 440,
+      "stock_count": 37,
+      "buy_ratio": 75.0
+    },
+    {
+      "sector_short": "医药生物",
+      "attention": 404,
+      "stock_count": 186,
+      "buy_ratio": 88.9
+    },
+    {
+      "sector_short": "交运设备",
+      "attention": 376,
+      "stock_count": 146,
+      "buy_ratio": 84.8
+    },
+    {
+      "sector_short": "化学制品",
+      "attention": 367,
+      "stock_count": 98,
+      "buy_ratio": 88.1
+    },
+    {
+      "sector_short": "电气设备",
+      "attention": 330,
+      "stock_count": 138,
+      "buy_ratio": 82.4
+    },
+    {
+      "sector_short": "建筑建材",
+      "attention": 325,
+      "stock_count": 134,
+      "buy_ratio": 86.7
+    },
+    {
+      "sector_short": "信息服务",
+      "attention": 291,
+      "stock_count": 183,
+      "buy_ratio": 76.3
+    },
+    {
+      "sector_short": "交通运输",
+      "attention": 266,
+      "stock_count": 89,
+      "buy_ratio": 76.9
+    },
+    {
+      "sector_short": "采掘",
+      "attention": 255,
+      "stock_count": 53,
+      "buy_ratio": 76.0
+    },
+    {
+      "sector_short": "电子",
+      "attention": 254,
+      "stock_count": 139,
+      "buy_ratio": 80.0
+    },
+    {
+      "sector_short": "家用电器",
+      "attention": 243,
+      "stock_count": 52,
+      "buy_ratio": 77.8
+    },
+    {
+      "sector_short": "银行",
+      "attention": 227,
+      "stock_count": 16,
+      "buy_ratio": 100.0
+    },
+    {
+      "sector_short": "有色金属",
+      "attention": 226,
+      "stock_count": 100,
+      "buy_ratio": 82.1
+    },
+    {
+      "sector_short": "房地产",
+      "attention": 220,
+      "stock_count": 135,
+      "buy_ratio": 85.7
+    },
+    {
+      "sector_short": "食品加工制造",
+      "attention": 217,
+      "stock_count": 27,
+      "buy_ratio": 86.7
+    },
+    {
+      "sector_short": "煤炭开采",
+      "attention": 209,
+      "stock_count": 34,
+      "buy_ratio": 71.4
+    },
+    {
+      "sector_short": "房地产开发",
+      "attention": 208,
+      "stock_count": 125,
+      "buy_ratio": 84.0
+    },
+    {
+      "sector_short": "农林牧渔",
+      "attention": 204,
+      "stock_count": 80,
+      "buy_ratio": 82.1
+    },
+    {
+      "sector_short": "建筑装饰",
+      "attention": 201,
+      "stock_count": 68,
+      "buy_ratio": 89.3
+    },
+    {
+      "sector_short": "公用事业",
+      "attention": 195,
+      "stock_count": 108,
+      "buy_ratio": 84.6
+    },
+    {
+      "sector_short": "白色家电",
+      "attention": 193,
+      "stock_count": 41,
+      "buy_ratio": 73.9
+    },
+    {
+      "sector_short": "有色金属冶炼与加工",
+      "attention": 192,
+      "stock_count": 75,
+      "buy_ratio": 85.7
+    },
+    {
+      "sector_short": "纺织服装",
+      "attention": 187,
+      "stock_count": 66,
+      "buy_ratio": 84.2
+    },
+    {
+      "sector_short": "专用设备",
+      "attention": 172,
+      "stock_count": 93,
+      "buy_ratio": 72.4
+    },
+    {
+      "sector_short": "汽车零部件",
+      "attention": 164,
+      "stock_count": 68,
+      "buy_ratio": 85.7
+    },
+    {
+      "sector_short": "电力",
+      "attention": 164,
+      "stock_count": 57,
+      "buy_ratio": 80.6
     }
   ]
 }

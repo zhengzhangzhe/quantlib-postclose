@@ -4,6 +4,12 @@
 set -e
 cd "$(dirname "$0")/.."
 
+# Skip weekends (A-share market closed)
+DOW=$(date +%u)
+if [ "$DOW" -ge 6 ]; then
+    exit 0
+fi
+
 LOG="output/postclose/run.log"
 mkdir -p output/postclose
 

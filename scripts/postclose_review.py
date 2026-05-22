@@ -42,6 +42,7 @@ SYSTEM_PROMPT = """你是A股涨停板复盘分析师。根据今日涨停数据
 2. 无法确定概念归属的股票，用原始行业名作为主题名（如"橡胶""化学制药"）
 3. 不要把不相关的股票强行塞进热门主题——橡胶股≠机器人，纺织股≠AI
 4. "other_stocks"最多放5只真正无法归类的股票，剩下的用各自行业名独立成主题
+5. **单归属铁律**：每只股票只能归属一个主题。若某股身兼多概念（如联创电子=光学+智能驾驶），必须选择当日涨停的核心驱动概念，不得同时在两个主题中出现
 
 ### 正确示例
 - 京东方A(光学光电)+华映科技(光学光电)+纬达光电(光学光电)+龙腾光电(光学光电) → 概念明确 → "玻璃基板"
@@ -50,28 +51,35 @@ SYSTEM_PROMPT = """你是A股涨停板复盘分析师。根据今日涨停数据
 ### 错误示例（禁止！）
 - 龙星科技(橡胶)+北投科技(IT服务) → "机器人" ❌ 橡胶和IT服务跟机器人无关！
 - 华升股份(纺织制造)+直真科技(软件开发) → "AI硬件" ❌ 纺织和软件跟AI硬件无关！
+- 联创电子同时出现在"光学光电子"和"智能驾驶"两个主题 ❌ 单归属铁律！
+
+## A股微观结构常识
+- **大市值标的(>500亿)**：走趋势为主，极少连板。评价标准是资金持续性和趋势强度，不是"能否连板"。次日观察中不要对大市值标的提"连板"预期，应改为"趋势延续"或"分歧低吸"
+- **20CM标的(300/688开头)**：创业板/科创板涨停幅度20%。首板20CM的资金消耗和投机情绪权重≈主板2连板，需在输出中体现其特殊地位
+- **机构趋势型板块(如光模块/通信设备)**：核心标的常大涨但不封板(如+5%~+10%)。评价标准是板块资金净流入+核心股涨幅，不是涨停家数。资金流入>100亿但涨停≤3只的板块可能是"趋势型主线"，不应贬为"强度次之"
 
 ## 主题类型
 - 主线：多股涨停(≥4只)+板块资金配合+早盘封板+有容量标的
+- 趋势型主线：资金大幅流入(>100亿)但涨停≤3只，核心股大涨(>5%)，视为机构主导行情，同样按主线对待
 - 次主线：涨停股较多但资金配合不全、或容量确认但前排分歧
-- 活口：仅个别涨停(≤2只)、行业整体退潮或资金流出
+- 活口：仅个别涨停(≤2只)、行业整体退潮或资金流出。⚠️ 若某主题只有1只涨停且无同概念跟涨股，即使该股有多个概念标签，也不应单独成主题——将其归入实际涨停驱动概念
 - 失败轮动：昨日强势主题今日全面退潮
 - 资金撤退方向：持续大幅流出、仅剩个别活口
 
 ## 输出JSON
 {
-  "opening_observations": [{"theme":"主题","observation":"现象(含资金数据)","sector_flow_note":"板块资金情况"}],
+  "opening_observations": [{"theme":"主题","observation":"现象(含资金数据，仅提及该主题内的股票)","sector_flow_note":"板块资金情况"}],
   "risk_boundary": "一句话风险边界(30字内)",
   "one_sentence": "一句话总收口(30字内)",
   "sentiment_stage": "情绪运行阶段判断(50字内)",
   "previous_day_review": [{"theme":"昨日主题","yesterday_samples":["股1","股2"],"today_status":"今日状态","classification":"局部活口/资金撤退方向/个股事件活口/高度活口/高度链延续"}],
-  "themes": [{"name":"主题名","type":"主线/次主线/活口/失败轮动/资金撤退方向","member_stocks":["简称"],"sector_flow_note":"资金情况","verdict":"综合判定(60字内)"}],
+  "themes": [{"name":"主题名","type":"主线/趋势型主线/次主线/活口/失败轮动/资金撤退方向","member_stocks":["涨停简称"],"strong_movers":["非涨停强势股简称，涨幅>5%且资金流入显著的标的"],"sector_flow_note":"资金情况","verdict":"综合判定(60字内)"}],
   "other_stocks": ["无法归类的股票，尽量≤8只"],
   "old_strength_failures": ["昨日强势今日失败股票"],
   "causal_breakdown": "各主题分类理由(200字内)",
   "intraday_narrative": "早盘→盘中→午后 过程描述(200字内)",
   "role_summary": "角色层总收口(100字内)",
-  "next_day_outlook": "次日观察要点(200字内)",
+  "next_day_outlook": "次日观察要点(200字内)。注意：大市值标的用「趋势延续」「分歧低吸」等表述，不用「能否连板」",
   "risk_participation": "市场风险与参与边界(150字内)"
 }
 只输出JSON，不用markdown代码块。股票名只用简称。所有文字简洁准确。"""
@@ -145,6 +153,31 @@ def _parse_time_to_minutes(t) -> int:
 
 def _pct_str(v: float) -> str:
     return f"{v:+.2f}%"
+
+
+def _detect_board(code_str: str) -> str:
+    """Detect stock board from code prefix."""
+    c = code_str.split(".")[0] if "." in code_str else str(code_str).zfill(6)
+    if c.startswith(("300", "301")):
+        return "创业板"
+    elif c.startswith(("688", "689")):
+        return "科创板"
+    elif c.startswith(("4", "8")):
+        return "北交所"
+    return "主板"
+
+
+def _is_20cm(code_str: str) -> bool:
+    c = code_str.split(".")[0] if "." in code_str else str(code_str).zfill(6)
+    return c.startswith(("300", "301", "688", "689"))
+
+
+def _attn_heat(attention: float) -> str:
+    if attention >= 200:
+        return "🔥🔥 "
+    elif attention >= 100:
+        return "🔥 "
+    return ""
 
 
 # ═══════════════════════════════════════════════════════════
@@ -355,6 +388,31 @@ def fetch_prev_limit_up_pool(trade_date: str) -> pd.DataFrame:
     return fetch_limit_up_pool(_prev_trading_day(trade_date))
 
 
+def fetch_institute_attention() -> pd.DataFrame:
+    """Fetch sector-level research report attention from 新浪财经."""
+    import akshare as ak
+    try:
+        df = _retry(lambda: ak.stock_institute_recommend(symbol="行业关注度"), max_retries=2, delay=2.0)
+    except Exception:
+        print("    [warn] 机构关注度获取失败")
+        return pd.DataFrame()
+    if df.empty:
+        return pd.DataFrame()
+    # Clean industry names (remove parenthetical codes)
+    df["sector_short"] = df["行业名称"].str.replace(r"\(\d+\)", "", regex=True)
+    # Compute buy-side sentiment ratio
+    total_ratings = df["买入评级数"] + df["增持评级数"] + df["中性评级数"] + df["减持评级数"] + df["卖出评级数"]
+    df["buy_ratio"] = ((df["买入评级数"] / total_ratings * 100).fillna(0)).round(1)
+    df = df.rename(columns={
+        "行业名称": "sector_full", "关注度": "attention",
+        "关注股票数": "stock_count",
+        "买入评级数": "buy_count", "增持评级数": "overweight_count",
+        "中性评级数": "neutral_count", "减持评级数": "underweight_count",
+        "卖出评级数": "sell_count",
+    })
+    return df
+
+
 # ── Snapshot persistence ──
 
 def load_snapshot(trade_date: str) -> dict | None:
@@ -419,6 +477,8 @@ def _compute_stock_metrics(
             "float_mkt": float(row["float_mkt"]) if pd.notna(row.get("float_mkt")) else 0.0,
             "amount": float(row["amount"]) if pd.notna(row["amount"]) else 0.0,
             "industry": row.get("industry", ""),
+            "board": _detect_board(str(code)),
+            "is_20cm": _is_20cm(str(code)),
         }
     return metrics
 
@@ -443,6 +503,11 @@ def volume_price_ruling(m: dict) -> str:
         if net_flow < -1e6:
             return "收跌且资金流出" if pct <= 0 else "价格承接但资金流出"
         return "收跌掉队" if pct <= 0 else "价格承接但资金流出"
+    # 绝对缩量判断（不依赖前日数据），处理一字板/T字板/缩量封板
+    if is_zt and turnover < 1 and break_cnt == 0:
+        return "一字/极度缩量封板"
+    if is_zt and turnover < 3 and break_cnt == 0:
+        return "缩量封板"
     if prev_t and prev_t > 0:
         vol_ratio = turnover / prev_t
         if vol_ratio < 0.8 and break_cnt == 0 and turnover < 10:
@@ -532,15 +597,18 @@ def four_layer_classify(theme_stocks: list[str], all_metrics: dict) -> list[dict
     return assigned
 
 
-def consecutive_height_table(limit_up: pd.DataFrame, all_metrics: dict) -> list[dict]:
+def consecutive_height_table(limit_up: pd.DataFrame, all_metrics: dict,
+                             stock_theme_map: dict | None = None) -> list[dict]:
     """Build连板高度单元."""
     high = limit_up[limit_up["consecutive"] >= 2].copy()
     if high.empty:
         return []
+    theme_map = stock_theme_map or {}
     results = []
     for _, r in high.iterrows():
         name = _normalize_name(r["name"])
         m = all_metrics.get(name, {})
+        theme_name = theme_map.get(name, "")
         results.append({
             "name": name,
             "pct_chg": float(r["pct_chg"]),
@@ -550,7 +618,8 @@ def consecutive_height_table(limit_up: pd.DataFrame, all_metrics: dict) -> list[
             "first_time": r.get("first_time"),
             "break_cnt": int(r.get("break_cnt", 0)) if pd.notna(r.get("break_cnt", 0)) else 0,
             "lock_status": "回封" if r.get("break_cnt", 0) > 0 else "封板",
-            "industry": r.get("industry", ""),
+            "industry": theme_name if theme_name else r.get("industry", ""),
+            "is_20cm": m.get("is_20cm", False),
         })
     results.sort(key=lambda x: -x["consecutive"])
     return results
@@ -626,6 +695,22 @@ def prepare_llm_context(
             f"连板{r['consecutive']}板，{r['industry']}{bonus}"
         )
 
+    # Non-limit-up strong movers (for trend-type main line detection)
+    if not ind_flow.empty and not limit_up.empty:
+        lu_codes = set(_code_normalize(r["code"]) for _, r in limit_up.iterrows())
+        strong_movers = ind_flow[
+            (ind_flow["pct_chg"] > 5) &
+            (ind_flow["net_flow"] > 1e8) &
+            (~ind_flow["code"].apply(lambda c: _code_normalize(c) in lu_codes))
+        ].nlargest(15, "net_flow")
+        if not strong_movers.empty:
+            lines.append(f"\n## 非涨停强势股（涨幅>5%且净流入>1亿，共{len(strong_movers)}只）")
+            for _, r in strong_movers.iterrows():
+                lines.append(
+                    f"{r['name']}({r['code']})：涨跌幅{r['pct_chg']:+.2f}%，"
+                    f"净流入{_fmt_flow(r['net_flow'])}"
+                )
+
     # Previous day themes
     if prev_snapshot and prev_snapshot.get("themes"):
         lines.append(f"\n## 上一交易日主题回顾")
@@ -682,6 +767,7 @@ def render_markdown(
     llm_result: dict,
     all_metrics: dict,
     prev_snapshot: dict | None,
+    inst_attn: pd.DataFrame | None = None,
 ) -> str:
     L = []
     a = lambda s="": L.append(s)
@@ -760,6 +846,40 @@ def render_markdown(
             a(f"{i}. {r['name']}：{r.get('pct_chg', 0):+.2f}%，{_fmt_flow(r['net_flow'])}")
         a()
 
+    # Section 2.7: Institute research attention (summary)
+    a("### 2.7 机构研报热度")
+    a()
+    if inst_attn is not None and not inst_attn.empty:
+        top5 = inst_attn.nlargest(5, "attention")
+        a("**机构关注度 Top 5：**")
+        a()
+        a("| 行业 | 关注度 | 覆盖股数 | 买入占比 |")
+        a("|------|--------|----------|----------|")
+        for _, r in top5.iterrows():
+            heat = _attn_heat(r["attention"])
+            a(f"| {heat}{r['sector_short']} | {int(r['attention'])} | {int(r['stock_count'])} | {r['buy_ratio']:.0f}% |")
+        a()
+        # Resonance / divergence with fund flow
+        if not sector_flow.empty and "net_flow" in sector_flow.columns:
+            hot_attn = set(inst_attn.nlargest(15, "attention")["sector_short"].tolist())
+            resonance = []
+            fund_only = []
+            for _, r in sector_flow.nlargest(6, "net_flow").iterrows():
+                if r["sector"] in hot_attn:
+                    resonance.append(r["sector"])
+                else:
+                    fund_only.append(r["sector"])
+            if resonance:
+                a(f"> 共振（资金+研报双热）：{'、'.join(resonance)}")
+            if fund_only:
+                a(f"> ⚠️ 资金独热（研报未覆盖）：{'、'.join(fund_only)} → 短期情绪驱动")
+            a()
+        a(f"> 完整周报见 `output/institute_attention/{trade_date}/weekly.md`")
+        a()
+    else:
+        a("（机构关注度数据暂不可用）")
+        a()
+
     # Section 2.6
     a("### 2.6 情绪运行阶段")
     a()
@@ -783,6 +903,25 @@ def render_markdown(
     a("## 4. 主线 / 次主线 / 活口 / 失败轮动 / 资金撤退方向")
     a()
     themes = llm_result.get("themes", [])
+
+    # Build stock→theme mapping for consecutive height table
+    stock_theme_map = {}
+    for theme in themes:
+        for s in theme.get("member_stocks", []):
+            stock_theme_map[_normalize_name(s)] = theme.get("name", "")
+
+    # Build strong mover lookup from ind_flow
+    strong_mover_lookup = {}
+    if not ind_flow.empty:
+        for _, r in ind_flow.iterrows():
+            name = str(r.get("name", ""))
+            if name:
+                net_flow = r.get("net_flow", 0)
+                strong_mover_lookup[_normalize_name(name)] = {
+                    "pct_chg": float(r["pct_chg"]) if pd.notna(r.get("pct_chg")) else 0.0,
+                    "net_flow": float(net_flow) if pd.notna(net_flow) else 0.0,
+                }
+
     for theme in themes:
         name = theme.get("name", "")
         ttype = theme.get("type", "")
@@ -799,9 +938,21 @@ def render_markdown(
         layered = four_layer_classify(stocks, all_metrics)
         for m in layered:
             role_tag = _ROLE_LABELS.get(m.get("role", ""), "")
+            cm_tag = " [20%]" if m.get("is_20cm") else ""
             a(f"- **{role_tag} {m['name']}**：{_pct_str(m['pct_chg'])}，"
               f"换手{m['turnover']:.2f}%，净流入{_fmt_flow(m['net_flow'])}，"
-              f"封板时间{m.get('first_time','?')}，连板{m['consecutive']}板 → {m.get('ruling','')}")
+              f"封板时间{m.get('first_time','?')}，连板{m['consecutive']}板 → {m.get('ruling','')}{cm_tag}")
+        # Strong movers (didn't hit limit-up but strong flow)
+        strong = theme.get("strong_movers", [])
+        if strong:
+            a()
+            for sname in strong:
+                sm = strong_mover_lookup.get(_normalize_name(sname), {})
+                if sm:
+                    a(f"- 📈 趋势跟随 {sname}：{_pct_str(sm['pct_chg'])}，"
+                      f"净流入{_fmt_flow(sm['net_flow'])}（非涨停强势）")
+                else:
+                    a(f"- 📈 趋势跟随 {sname}（非涨停强势股）")
         a()
         if verdict:
             a(f"> **判定**：{verdict}")
@@ -835,14 +986,15 @@ def render_markdown(
     # Section 4.5: Consecutive height
     a("### 4.5 连板高度单元")
     a()
-    height_data = consecutive_height_table(limit_up, all_metrics)
+    height_data = consecutive_height_table(limit_up, all_metrics, stock_theme_map)
     if height_data:
         a("| 股票 | 状态 | 换手(今/昨) | 方向 | 风险 |")
         a("|------|------|-------------|------|------|")
         for h in height_data:
             prev_t_str = f"{h['prev_turnover']:.2f}%" if h.get("prev_turnover") else "?"
             risk = "高位分歧接力" if h["consecutive"] >= 3 else "分歧接力"
-            a(f"| {h['name']} | {_pct_str(h['pct_chg'])}，{h['lock_status']} | "
+            cm_tag = " [20%]" if h.get("is_20cm") else ""
+            a(f"| {h['name']}{cm_tag} | {_pct_str(h['pct_chg'])}，{h['lock_status']} | "
               f"{h['turnover']:.2f}%/{prev_t_str} | {h['industry']} | {risk} |")
         a()
 
@@ -865,8 +1017,9 @@ def render_markdown(
         a()
         for m in layered:
             prev_t_str = f"{m.get('prev_turnover', 0):.2f}%" if m.get('prev_turnover') else "N/A"
+            cm_tag = " [20%]" if m.get("is_20cm") else ""
             a(f"- **{m.get('role','')} {m['name']}**（{_pct_str(m['pct_chg'])}，"
-              f"换手{m['turnover']:.2f}%/{prev_t_str}，{_fmt_flow(m['net_flow'])}）→ {m.get('ruling','')}")
+              f"换手{m['turnover']:.2f}%/{prev_t_str}，{_fmt_flow(m['net_flow'])}）→ {m.get('ruling','')}{cm_tag}")
         a()
 
     # Old strength failure detail
@@ -919,7 +1072,11 @@ def render_markdown(
     for theme in themes:
         name = theme.get("name", "")
         stocks = theme.get("member_stocks", [])
-        a(f"- **{name}**：{'、'.join(stocks[:4])}")
+        strong = theme.get("strong_movers", [])
+        all_watch = list(stocks[:4])
+        if strong:
+            all_watch.extend(strong[:2])
+        a(f"- **{name}**：{'、'.join(all_watch)}")
     a()
 
     # Section 12 — dynamic based on actual volume-price rulings
@@ -942,10 +1099,14 @@ def render_markdown(
                 retain.append(name)
             elif ruling not in ("封板强但资金流出",):
                 new_entries.append(name)
+    # Old strength failures → downgrade
+    if failures:
+        for fname in failures:
+            downgrade.append(f"{fname}(旧强失败)")
     new_uniq = list(dict.fromkeys(new_entries))  # dedup preserving order
     a(f"| 新补录 | {', '.join(new_uniq[:12])}{' 等' if len(new_uniq) > 12 else ''} 进入次日观察 |")
     if downgrade:
-        a(f"| ⚠️ 降级 | {', '.join(downgrade[:8])} → 高位风险，移出核心观察池 |")
+        a(f"| ⚠️ 降级 | {', '.join(downgrade[:8])}{' 等' if len(downgrade) > 8 else ''} → 移出核心观察池 |")
     else:
         a("| 降级 | 无触发降级条件的标的 |")
     if retain:
@@ -968,6 +1129,7 @@ def render_markdown(
     a("3. 换手率采用双日事实口径对比")
     a("4. 连板名册基于当日AkShare涨停股池接口更新")
     a("5. 主题归类与叙事分析由LLM辅助生成，仅供参考")
+    a("6. 机构研报热度来源于新浪财经机构推荐池，每日更新")
     a()
 
     a("---")
@@ -1051,6 +1213,10 @@ def main():
     prev_snapshot = load_prev_snapshot(trade_date)
     print("有" if prev_snapshot else "无(首次运行)")
 
+    print("  - 机构研报热度...", end=" ", flush=True)
+    inst_attn = fetch_institute_attention()
+    print(f"{len(inst_attn)}个行业" if not inst_attn.empty else "N/A")
+
     # ── 2. Compute metrics ──
     print("\n[2/5] 计算指标...")
     all_metrics = _compute_stock_metrics(limit_up, ind_flow, prev_limit_up)
@@ -1087,12 +1253,35 @@ def main():
             print(f"\n  失败: {e}")
             llm_result = llm_default
 
+    # Cross-theme dedup: ensure each stock appears in at most one theme
+    themes = llm_result.get("themes", [])
+    if themes:
+        seen = set()
+        cleaned_themes = []
+        dup_count = 0
+        for t in themes:
+            members = t.get("member_stocks", [])
+            unique_members = []
+            for s in members:
+                key = _normalize_name(s)
+                if key in seen:
+                    dup_count += 1
+                else:
+                    seen.add(key)
+                    unique_members.append(s)
+            if unique_members or t.get("strong_movers"):
+                t["member_stocks"] = unique_members
+                cleaned_themes.append(t)
+        if dup_count:
+            print(f"  [dedup] 移除 {dup_count} 只跨主题重复股票")
+        llm_result["themes"] = cleaned_themes
+
     # ── 4. Generate report ──
     print("\n[4/5] 生成报告...")
     markdown = render_markdown(
         trade_date, limit_up, failed, limit_down,
         sector_flow, ind_flow, index_sh, index_sz, breadth,
-        llm_result, all_metrics, prev_snapshot,
+        llm_result, all_metrics, prev_snapshot, inst_attn,
     )
     out_dir = OUTPUT / trade_date
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -1133,6 +1322,10 @@ def main():
                      "member_stocks": t.get("member_stocks", [])}
                    for t in llm_result.get("themes", [])],
         "limit_up_stocks": stock_records,
+        "institute_attention": (
+            inst_attn[["sector_short", "attention", "stock_count", "buy_ratio"]]
+            .head(30).to_dict(orient="records")
+        ) if inst_attn is not None and not inst_attn.empty else [],
     }
     save_snapshot(trade_date, snapshot)
     print(f"  快照已保存: {DATA_SNAPSHOTS / trade_date / 'snapshot.json'}")

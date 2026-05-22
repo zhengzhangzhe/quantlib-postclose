@@ -24,6 +24,7 @@ except ImportError:
 
 PROJ = Path(__file__).resolve().parent.parent
 OUTPUT = PROJ / "output"
+_DOW = ["周一", "周二", "周三", "周四", "周五", "周六", "周日"]
 
 CSS = """
 :root {
@@ -215,7 +216,7 @@ class ReportHandler(http.server.SimpleHTTPRequestHandler):
     def _serve_index(self):
         """Generate and serve index page listing all reports."""
         items = {}
-        for sub in ['postclose', 'morning']:
+        for sub in ['postclose', 'morning', 'institute_attention']:
             subdir = OUTPUT / sub
             if not subdir.exists():
                 continue
@@ -223,24 +224,30 @@ class ReportHandler(http.server.SimpleHTTPRequestHandler):
                 if not d.is_dir() or not d.name.startswith('20'):
                     continue
                 if d.name not in items:
-                    items[d.name] = {'date': d.name, 'has_postclose': False, 'has_morning': False}
+                    items[d.name] = {'date': d.name, 'has_postclose': False, 'has_morning': False, 'has_institute': False}
                 if sub == 'postclose' and (d / 'review.md').exists():
                     items[d.name]['has_postclose'] = True
                 if sub == 'morning' and (d / 'briefing.md').exists():
                     items[d.name]['has_morning'] = True
+                if sub == 'institute_attention' and (d / 'weekly.md').exists():
+                    items[d.name]['has_institute'] = True
 
         # Build index HTML
         rows = []
         for item in sorted(items.values(), key=lambda x: x['date'], reverse=True):
+            d = datetime.strptime(item['date'], '%Y-%m-%d')
+            dow = _DOW[d.weekday()]
             links = []
             if item['has_postclose']:
                 links.append('<a href="/postclose/{0}/review.md">📊 复盘</a>'.format(item['date']))
             if item['has_morning']:
                 links.append('<a href="/morning/{0}/briefing.md">📋 摘要</a>'.format(item['date']))
                 links.append('<a href="/morning/{0}/full">🌅 盘前全文</a>'.format(item['date']))
+            if item['has_institute']:
+                links.append('<a href="/institute_attention/{0}/weekly.md">🔬 研报热度</a>'.format(item['date']))
             rows.append(f"""
             <div class="date-card">
-                <div class="date">{item['date']}</div>
+                <div class="date">{item['date']} {dow}</div>
                 <div class="stats">{' · '.join(links)}</div>
             </div>""")
 
@@ -306,6 +313,10 @@ class ReportHandler(http.server.SimpleHTTPRequestHandler):
             title_match = re.search(r'POSTCLOSE REVIEW · (\d{4}-\d{2}-\d{2})', md_text)
             title = f"收盘复盘 · {title_match.group(1)}" if title_match else "收盘复盘"
             body = full_body
+        elif '机构研报热度周报' in md_text:
+            title_match = re.search(r'机构研报热度周报 · (\d{4}-\d{2}-\d{2})', md_text)
+            title = f"机构研报热度 · {title_match.group(1)}" if title_match else "机构研报热度"
+            body = full_body
         else:
             title = "复盘报告"
             body = full_body
@@ -337,7 +348,7 @@ def main():
     args = parser.parse_args()
 
     # Ensure output dirs exist
-    for sub in ['postclose', 'morning']:
+    for sub in ['postclose', 'morning', 'institute_attention']:
         (OUTPUT / sub).mkdir(parents=True, exist_ok=True)
 
     url = f"http://localhost:{args.port}"
