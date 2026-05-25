@@ -2,8 +2,6 @@
 """Build static HTML site from output/ markdown files for GitHub Pages."""
 
 import re
-import shutil
-import sys
 from datetime import datetime, date
 from pathlib import Path
 
@@ -18,7 +16,7 @@ except ImportError:
     HAS_MD = False
 
 CSS = """
-:root{--bg:#0d1117;--card:#161b22;--border:#30363d;--text:#c9d1d9;--muted:#8b949e;--accent:#58a6ff;--green:#3fb950;--red:#f85149;--yellow:#d2991d}
+:root{--bg:#0d1117;--card:#161b22;--border:#30363d;--text:#c9d1d9;--muted:#8b949e;--accent:#58a6ff;--green:#3fb950;--red:#f85149;--yellow:#d2991d;--buy:#238636;--watch:#9e6a03;--avoid:#da3633}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;padding:20px;max-width:900px;margin:0 auto}
 h1{border-bottom:1px solid var(--border);padding-bottom:12px;margin:24px 0 12px;color:#f0f6fc}
@@ -42,20 +40,126 @@ strong{color:#f0f6fc}
 .date-card .date{font-weight:bold;color:var(--accent)}
 .date-card .stats{font-size:0.8em;color:var(--muted);margin-top:4px}
 .footer{margin-top:40px;padding-top:12px;border-top:1px solid var(--border);color:var(--muted);font-size:0.8em;text-align:center}
-.header h1{border:none;margin:0;font-size:1.1em}
 .action-buy{color:var(--green);font-weight:bold}
 .action-watch{color:var(--yellow);font-weight:bold}
 .action-avoid{color:var(--red);font-weight:bold}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin:16px 0}
+.sector-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:14px}
+.sector-card.buy{border-left:3px solid var(--green)}
+.sector-card.watch{border-left:3px solid var(--yellow)}
+.sector-card.avoid{border-left:3px solid var(--red)}
+.sector-card h3{margin:0 0 6px;font-size:1em;display:flex;justify-content:space-between}
+.sector-card .reason{font-size:0.85em;color:var(--muted);margin:6px 0}
+.sector-card .stocks{font-size:0.85em}
+.sector-card .stock{display:inline-block;background:#21262d;padding:2px 8px;border-radius:4px;margin:2px 4px 2px 0;font-size:0.85em}
+.meta{color:var(--muted);font-size:0.85em;margin-bottom:16px}
+details summary{cursor:pointer;font-weight:bold;padding:8px 0;color:var(--accent)}
 """
 
-_DOW = ["周一","周二","周三","周四","周五","周六","周日"]
+_DOW = ["周一", "周二", "周三", "周四", "周五", "周六", "周日"]
 
 
 def md_to_html(md_text: str) -> str:
     if HAS_MD:
-        body = md_lib.markdown(md_text, extensions=['tables', 'fenced_code'])
+        return md_lib.markdown(md_text, extensions=['tables', 'fenced_code'])
+    return md_text.replace('\n', '<br>')
+
+
+def _render_briefing_card(md_text: str) -> str:
+    """Render morning briefing as a card-based HTML layout, mirroring serve.py."""
+    recs = []
+    in_table = False
+    for line in md_text.split('\n'):
+        if line.startswith('| 板块 |'):
+            in_table = True
+            continue
+        if in_table:
+            if line.startswith('|') and '---' not in line:
+                parts = [p.strip() for p in line.split('|')[1:-1]]
+                if len(parts) >= 6:
+                    recs.append({
+                        'sector': parts[0], 'source': parts[1],
+                        'action': parts[2], 'confidence': parts[3],
+                        'reason': parts[4], 'stocks': parts[5],
+                    })
+            elif not line.startswith('|'):
+                in_table = False
+
+    stance_match = re.search(r'> (.+仓位[^。]+)', md_text)
+    stance = stance_match.group(1) if stance_match else ""
+
+    risks = []
+    in_risks = False
+    for line in md_text.split('\n'):
+        if '## 5. 风险提示' in line:
+            in_risks = True
+            continue
+        if in_risks and line.startswith('- '):
+            risks.append(line[2:])
+        elif in_risks and line.startswith('## '):
+            break
+
+    consistency = []
+    in_consistency = False
+    for line in md_text.split('\n'):
+        if '## 一致性校验' in line:
+            in_consistency = True
+            continue
+        if in_consistency and line.startswith('- '):
+            consistency.append(line[2:])
+        elif in_consistency and (line.startswith('## ') or line == '---'):
+            break
+
+    html = ''
+    if stance:
+        html += f'<blockquote><strong>📋 整体策略：</strong>{stance}</blockquote>\n'
+
+    action_map = {'🟢 买入': 'buy', '🟡 关注': 'watch', '🔴 回避': 'avoid'}
+    html += '<div class="card-grid">\n'
+    for r in recs:
+        action = r.get('action', '')
+        cls = action_map.get(action, '')
+        html += f'<div class="sector-card {cls}">\n'
+        html += f'<h3>{r["sector"]} <span class="action-{cls}">{action}</span></h3>\n'
+        html += f'<div class="reason">📌 {r["reason"]}</div>\n'
+        if r.get('stocks'):
+            html += '<div class="stocks">'
+            for stock in r['stocks'].split('<br>'):
+                stock = stock.strip()
+                if stock:
+                    html += f'<span class="stock">{stock}</span>'
+            html += '</div>\n'
+        html += '</div>\n'
+    html += '</div>\n'
+
+    if risks:
+        html += '<h3>⚠️ 风险提示</h3>\n<ul>\n'
+        for r in risks:
+            html += f'<li>{r}</li>\n'
+        html += '</ul>\n'
+
+    if consistency:
+        html += '<details open><summary>🔍 一致性校验</summary>\n<ul style="font-size:0.85em">\n'
+        for c in consistency:
+            cls = 'style="color:var(--red)"' if c.startswith('🔴') or c.startswith('❌') else \
+                  'style="color:var(--yellow)"' if c.startswith('📌') else ''
+            html += f'<li {cls}>{c}</li>\n'
+        html += '</ul></details>\n'
+
+    return html
+
+
+def render_page(md_text: str, filepath: str) -> str:
+    """Render a markdown file to full HTML page."""
+    is_briefing = 'morning' in filepath and 'briefing' in filepath
+
+    if is_briefing and '盘前简报' in md_text:
+        card = _render_briefing_card(md_text)
+        full_body = md_to_html(md_text)
+        body = f'{card}\n<hr>\n<details><summary>📄 查看全文</summary>\n{full_body}\n</details>'
     else:
-        body = md_text.replace('\n', '<br>')
+        body = md_to_html(md_text)
+
     return body
 
 
@@ -156,7 +260,7 @@ def build_site():
                     out_dir = page_dir / d
                     out_dir.mkdir(parents=True, exist_ok=True)
                     md_text = src_path.read_text()
-                    body = md_to_html(md_text)
+                    body = render_page(md_text, src)
                     html = wrap_page(f"复盘 · {d}", body)
                     with open(out_dir / f'{fname}.html', 'w') as f:
                         f.write(html)
