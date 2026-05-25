@@ -1,0 +1,31 @@
+name: Institute Research Heat Weekly
+
+on:
+  schedule:
+    # Friday 15:40 CST = 07:40 UTC
+    - cron: '40 7 * * 5'
+  workflow_dispatch:
+
+jobs:
+  weekly:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - run: pip install akshare pandas requests
+
+      - name: Run institute attention weekly
+        run: python3 scripts/institute_attention.py
+
+      - name: Git commit & push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/institute_attention/ output/institute_attention/
+          git diff --staged --quiet || git commit -m "auto: institute attention weekly $(date +%Y-%m-%d)"
+          git push
