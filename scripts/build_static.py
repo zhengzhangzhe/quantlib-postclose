@@ -156,9 +156,7 @@ def render_page(md_text: str, filepath: str) -> str:
 
 def render_briefing_pages(md_text: str) -> tuple[str, str]:
     """Return (card_only_html, full_html) for morning briefing."""
-    card = _render_briefing_card(md_text)
-    full_body = md_to_html(md_text)
-    return card, f'{card}\n<hr>\n{full_body}'
+    return _render_briefing_card(md_text), md_to_html(md_text)
 
 
 def wrap_page(title: str, body: str) -> str:
