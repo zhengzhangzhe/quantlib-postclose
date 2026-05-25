@@ -156,7 +156,7 @@ def render_page(md_text: str, filepath: str) -> str:
     if is_briefing and '盘前简报' in md_text:
         card = _render_briefing_card(md_text)
         full_body = md_to_html(md_text)
-        body = f'{card}\n<hr>\n<details><summary>📄 查看全文</summary>\n{full_body}\n</details>'
+        body = f'{card}\n<hr>\n{full_body}'
     else:
         body = md_to_html(md_text)
 
