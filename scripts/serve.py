@@ -322,7 +322,7 @@ class ReportHandler(http.server.SimpleHTTPRequestHandler):
         full_body = full_body.replace('🟡 关注', '<span class="action-watch">🟡 关注</span>')
         full_body = full_body.replace('🔴 回避', '<span class="action-avoid">🔴 回避</span>')
 
-        if '盘前简报' in md_text:
+        if md_text.startswith('# 盘前简报') or '盘前简报 ·' in md_text[:200]:
             title_match = re.search(r'# 盘前简报 · (\d{4}-\d{2}-\d{2})', md_text)
             title = f"盘前简报 · {title_match.group(1)}" if title_match else "盘前简报"
             if card_only:
@@ -347,8 +347,8 @@ class ReportHandler(http.server.SimpleHTTPRequestHandler):
             title_match = re.search(r'机构研报热度周报 · (\d{4}-\d{2}-\d{2})', md_text)
             title = f"机构研报热度 · {title_match.group(1)}" if title_match else "机构研报热度"
             body = full_body
-        elif '一致性校验' in md_text:
-            title_match = re.search(r'一致性校验 · (\d{4}-\d{2}-\d{2})', md_text)
+        elif '盘前预测准确性校验' in md_text or '一致性校验' in md_text:
+            title_match = re.search(r'(?:盘前预测准确性校验|一致性校验) · (\d{4}-\d{2}-\d{2})', md_text)
             title = f"一致性校验 · {title_match.group(1)}" if title_match else "一致性校验"
             body = full_body
         else:
