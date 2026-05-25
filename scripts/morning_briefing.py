@@ -31,6 +31,7 @@ import requests
 PROJ = Path(__file__).resolve().parent.parent
 OUTPUT = PROJ / "output" / "morning"
 DATA_SNAPSHOTS = PROJ / "data" / "postclose"  # reuse postclose snapshot
+DATA_INSTITUTE = PROJ / "data" / "institute_attention"
 
 # ── LLM ──
 LLM_URL = "https://api.deepseek.com/v1/chat/completions"
@@ -283,6 +284,18 @@ def load_postclose_snapshot(trade_date: str) -> dict | None:
     return None
 
 
+def load_institute_attention(trade_date: str) -> dict | None:
+    """Load most recent institute attention weekly report before trade_date."""
+    td = date.fromisoformat(trade_date)
+    for offset in range(0, 8):
+        d = td - timedelta(days=offset)
+        path = DATA_INSTITUTE / f"{d.isoformat()}.json"
+        if path.exists():
+            with open(path) as f:
+                return json.load(f)
+    return None
+
+
 def _days_since_last_trading(trade_date: str) -> int:
     """How many calendar days since the last trading day closed.
 
@@ -310,6 +323,7 @@ def build_llm_context(
     xueqiu_flash: list[dict],
     guba_posts: list[dict],
     postclose: dict | None,
+    inst_attn: dict | None = None,
 ) -> str:
     lines = []
     lines.append(f"## 日期：{trade_date} 盘前")
@@ -379,6 +393,17 @@ def build_llm_context(
                 stocks = "、".join(t.get("member_stocks", [])[:6])
                 lines.append(f"  - {t['name']}（{t.get('type','')}）：{stocks}")
             lines.append("如果隔夜新闻/快讯中有新的热门板块，追加为「隔夜新催化」。")
+
+    # Institute attention — recent research report heat
+    if inst_attn:
+        lines.append("")
+        lines.append("## 机构研报热度（最近一期周报）")
+        top_ind = list(inst_attn.get("by_industry", {}).items())[:8]
+        lines.append(f"日期：{inst_attn.get('date','?')}，共{inst_attn.get('total','?')}份研报")
+        lines.append("机构最密集覆盖的行业：")
+        for ind, cnt in top_ind:
+            lines.append(f"  - {ind}：{cnt}份研报")
+        lines.append("参考以上机构热度，对机构密集覆盖的行业可适当提高操作评级。")
         lines.append("")
 
     return "\n".join(lines)
@@ -591,6 +616,13 @@ def main():
     else:
         print("无")
 
+    print("  - 研报热度(最近一期)...", end=" ", flush=True)
+    inst_attn = load_institute_attention(trade_date)
+    if inst_attn:
+        print(f"{inst_attn.get('date', '?')} ({inst_attn.get('total', '?')}份研报)")
+    else:
+        print("无")
+
     print("  - 雪球7×24快讯...", end=" ", flush=True)
     xq_flash = fetch_xueqiu_flash(xueqiu_count)
     print(f"{len(xq_flash)}条")
@@ -619,7 +651,7 @@ def main():
         llm_result = llm_default
     else:
         print("\n[2/3] LLM 分析...")
-        context = build_llm_context(trade_date, cctv, tenjqka, sina, xq_flash, guba, postclose)
+        context = build_llm_context(trade_date, cctv, tenjqka, sina, xq_flash, guba, postclose, inst_attn)
         print(f"  上下文: {len(context)} 字符")
         print("  调用 DeepSeek...", end=" ", flush=True)
         try:
@@ -726,15 +758,22 @@ def main():
             consecutive = active.get("consecutive", 1) if active else 0
             break_cnt = active.get("break_cnt", 0) if active else 0
 
+            # Day label: "昨日" on next trading day, else "周五" etc.
+            if gap_days <= 1:
+                day_tag = "昨日"
+            else:
+                last_td = date.fromisoformat(trade_date) - timedelta(days=gap_days)
+                day_tag = ["周一","周二","周三","周四","周五","周六","周日"][last_td.weekday()]
+
             if is_zt:
-                note = f"🔥 前日涨停 · {desc}"
+                note = f"🔥 {day_tag}涨停 · {desc}"
                 if consecutive > 1:
                     note += f"，{consecutive}连板"
                 if break_cnt > 0:
                     note += "，炸板回封"
                 score = 1000 + active.get("float_mkt", 0) / 1e8
             else:
-                note = f"行业龙头（昨未涨停）· {desc}"
+                note = f"行业龙头（{day_tag}未涨停）· {desc}"
                 score = 0
 
             result.append({"name": name, "code": code, "score": score, "note": note})
