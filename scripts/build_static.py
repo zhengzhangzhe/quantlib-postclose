@@ -151,16 +151,14 @@ def _render_briefing_card(md_text: str) -> str:
 
 def render_page(md_text: str, filepath: str) -> str:
     """Render a markdown file to full HTML page."""
-    is_briefing = 'morning' in filepath and 'briefing' in filepath
+    return md_to_html(md_text)
 
-    if is_briefing and '盘前简报' in md_text:
-        card = _render_briefing_card(md_text)
-        full_body = md_to_html(md_text)
-        body = f'{card}\n<hr>\n{full_body}'
-    else:
-        body = md_to_html(md_text)
 
-    return body
+def render_briefing_pages(md_text: str) -> tuple[str, str]:
+    """Return (card_only_html, full_html) for morning briefing."""
+    card = _render_briefing_card(md_text)
+    full_body = md_to_html(md_text)
+    return card, f'{card}\n<hr>\n{full_body}'
 
 
 def wrap_page(title: str, body: str) -> str:
@@ -219,7 +217,8 @@ def build_site():
         if item['postclose']:
             links.append('<a href="/quantlib-postclose/p/{0}/review.html">📊 复盘</a>'.format(item['date']))
         if item['morning']:
-            links.append('<a href="/quantlib-postclose/p/{0}/briefing.html">🌅 盘前</a>'.format(item['date']))
+            links.append('<a href="/quantlib-postclose/p/{0}/briefing.html">📋 摘要</a>'.format(item['date']))
+            links.append('<a href="/quantlib-postclose/p/{0}/full.html">🌅 盘前全文</a>'.format(item['date']))
         if item['institute']:
             links.append('<a href="/quantlib-postclose/p/{0}/weekly.html">🔬 研报</a>'.format(item['date']))
         if item['consistency']:
@@ -251,19 +250,32 @@ def build_site():
     page_dir = DIST / 'p'
     for item in items.values():
         d = item['date']
-        for key, fname in [('postclose', 'review'), ('morning', 'briefing'),
-                          ('institute', 'weekly'), ('consistency', 'check')]:
+        out_dir = page_dir / d
+        out_dir.mkdir(parents=True, exist_ok=True)
+
+        for key, fname in [('postclose', 'review'), ('institute', 'weekly'), ('consistency', 'check')]:
             src = item.get(key)
             if src:
                 src_path = Path(src)
                 if src_path.exists():
-                    out_dir = page_dir / d
-                    out_dir.mkdir(parents=True, exist_ok=True)
                     md_text = src_path.read_text()
                     body = render_page(md_text, src)
                     html = wrap_page(f"复盘 · {d}", body)
                     with open(out_dir / f'{fname}.html', 'w') as f:
                         f.write(html)
+
+        # Morning briefing: two pages (card summary + full)
+        if item['morning']:
+            src_path = Path(item['morning'])
+            if src_path.exists():
+                md_text = src_path.read_text()
+                card, full = render_briefing_pages(md_text)
+                # Card-only summary
+                with open(out_dir / 'briefing.html', 'w') as f:
+                    f.write(wrap_page(f"盘前简报 · {d}", card))
+                # Full content
+                with open(out_dir / 'full.html', 'w') as f:
+                    f.write(wrap_page(f"盘前简报全文 · {d}", full))
 
     print(f"Built {len(items)} dates → {DIST}/")
     print(f"Index: {DIST / 'index.html'}")
