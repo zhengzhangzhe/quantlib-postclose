@@ -56,30 +56,41 @@ def load_briefing(date_str: str) -> str | None:
 
 def parse_briefing_table(md_text: str) -> dict:
     """Extract sector recommendations from briefing markdown.
-    Returns: {sector_name: {action, stocks, source}}
+    Returns: {sector_name: {action, stocks, source, reason, confidence}}
     """
     recs = {}
     in_table = False
-    s_idx = a_idx = src_idx = None
+    col_map = {}  # name → index
     for line in md_text.split("\n"):
-        if "板块" in line and "操作" in line:
+        # Header row
+        if "板块" in line and "操作" in line and "---" not in line:
             in_table = True
             headers = [h.strip() for h in line.split("|")[1:-1]]
             for i, h in enumerate(headers):
                 if "板块" in h:
-                    s_idx = i
+                    col_map["sector"] = i
                 elif "操作" in h:
-                    a_idx = i
+                    col_map["action"] = i
+                elif "来源" in h:
+                    col_map["source"] = i
+                elif "理由" in h:
+                    col_map["reason"] = i
+                elif "信心" in h:
+                    col_map["confidence"] = i
             continue
         if in_table:
             if line.startswith("|") and "---" not in line:
                 parts = [p.strip() for p in line.split("|")[1:-1]]
-                if s_idx is None or len(parts) <= s_idx:
+                si = col_map.get("sector")
+                if si is None or len(parts) <= si:
                     continue
-                sector = parts[s_idx]
-                action = parts[a_idx] if a_idx is not None and len(parts) > a_idx else ""
-                # Extract stocks from last column
-                stocks_raw = parts[-1] if len(parts) > max(s_idx, a_idx or 0) + 1 else ""
+                sector = parts[si]
+                action = parts[col_map["action"]] if "action" in col_map and len(parts) > col_map["action"] else ""
+                source = parts[col_map["source"]] if "source" in col_map and len(parts) > col_map["source"] else ""
+                reason = parts[col_map["reason"]] if "reason" in col_map and len(parts) > col_map["reason"] else ""
+                confidence = parts[col_map["confidence"]] if "confidence" in col_map and len(parts) > col_map["confidence"] else ""
+                # Extract stocks
+                stocks_raw = parts[-1] if len(parts) > si + 1 else ""
                 stocks = []
                 for s in stocks_raw.split("<br>"):
                     s_clean = re.sub(r'\(.*?\)', '', s.strip())
@@ -87,7 +98,11 @@ def parse_briefing_table(md_text: str) -> dict:
                     s_clean = re.sub(r'[🔥🆕📈🟢🟡🔴⚠️💤📌🔍❌\s·\d]+', '', s_clean)
                     if s_clean and len(s_clean) > 1 and len(s_clean) < 10:
                         stocks.append(s_clean)
-                recs[sector] = {"action": action, "stocks": stocks}
+                recs[sector] = {
+                    "action": action, "stocks": stocks,
+                    "source": source, "reason": reason,
+                    "confidence": confidence,
+                }
             elif not line.startswith("|"):
                 in_table = False
     return recs
@@ -197,6 +212,8 @@ def evaluate_predictions(br_recs: dict, postclose: dict) -> dict:
                     "sector": pc_name, "action": action,
                     "predicted": f"买入", "actual": actual_type,
                     "hit_rate": hit_rate, "hit_stocks": hit_stocks,
+                    "reason": br.get("reason", ""),
+                    "source": br.get("source", ""),
                 })
                 total_weighted += pred_score
             else:
@@ -220,6 +237,8 @@ def evaluate_predictions(br_recs: dict, postclose: dict) -> dict:
                     "sector": pc_name, "action": action,
                     "predicted": f"回避", "actual": actual_type,
                     "hit_rate": 0, "hit_stocks": [],
+                    "reason": br.get("reason", ""),
+                    "source": br.get("source", ""),
                 })
                 total_weighted += abs(pred_score)
             else:
@@ -254,6 +273,44 @@ def evaluate_predictions(br_recs: dict, postclose: dict) -> dict:
             "accuracy": accuracy,
         },
     }
+
+
+# ═══════════════════════════════════════════════════════════
+# REFLECTION
+# ═══════════════════════════════════════════════════════════
+
+def _analyze_miss(r: dict) -> str:
+    """Analyze why a prediction missed based on briefing thesis vs outcome."""
+    parts = []
+    reason = r.get("reason", "")
+    source = r.get("source", "")
+    actual = r.get("actual", "")
+
+    # Pattern 1: 隔夜新催化 not validated
+    if "隔夜" in source or "隔夜" in reason:
+        parts.append("隔夜催化逻辑未获市场认可，消息面驱动不足以形成板块效应")
+        if "资金" in reason:
+            parts.append("资金未跟进，催化停留在消息层面")
+
+    # Pattern 2: 前日主线 downgraded
+    if "前日" in source and actual in WEAK_RESULT:
+        parts.append("前日强势方向未能延续，次日分化或退潮")
+        if "分化" in reason or "高潮" in reason:
+            parts.append("盘前已有分化预期但仍低估了退潮力度")
+
+    # Pattern 3: High confidence miss
+    confidence = r.get("confidence", "")
+    if "高" in confidence:
+        parts.append("高信心预测失误，需检查底层假设是否被新信息推翻")
+
+    # Pattern 4: Macro/news driven miss
+    if "原油" in reason or "油价" in reason or "宏观" in reason:
+        parts.append("大宗/宏观逻辑在A股题材框架下传导链过长，市场反应滞后或不反应")
+
+    if not parts:
+        parts.append("需复盘盘前假设与市场实际走势的偏差来源")
+
+    return "；".join(parts)
 
 
 # ═══════════════════════════════════════════════════════════
@@ -316,9 +373,42 @@ def render_report(date_str: str, br_recs: dict, postclose: dict,
             if r.get("miss_stocks"):
                 a(f"推荐未涨停：{'、'.join(r['miss_stocks'][:5])}")
             a()
+
+    # ── Reflection on misses ──
+    if eval_results["misses"]:
+        a("## 🔍 失误复盘反思")
+        a()
+        for r in eval_results["misses"]:
+            a(f"### {r['sector']} — 预测买入，实际{r['actual']}")
+            a()
+            reason = r.get("reason", "")
+            source = r.get("source", "")
+            if reason:
+                a(f"**盘前逻辑**：{reason}")
+                a()
+            # Analyze likely failure mode
+            reflection = _analyze_miss(r)
+            if reflection:
+                a(f"**反思**：{reflection}")
+            a()
     else:
         a("今日无重大失误。")
         a()
+
+    # ── Positive validation ──
+    if eval_results["hits"]:
+        a("## 💡 有效信号复盘")
+        a()
+        for r in eval_results["hits"]:
+            a(f"### {r['sector']} — {r.get('predicted','')} → {r.get('actual','')}")
+            a()
+            if r.get("hit_stocks"):
+                stocks_str = "、".join(
+                    f"{s['name']}({s['pct']:+.1f}%)" for s in r["hit_stocks"]
+                )
+                a(f"涨停标的：{stocks_str}")
+            a(f"信号有效，可继续跟踪该方向。")
+            a()
 
     # ── Partial (关注) ──
     if eval_results["partial"]:
