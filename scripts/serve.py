@@ -121,6 +121,18 @@ def _render_briefing_card(md_text: str) -> str:
         elif in_risks and line.startswith('## '):
             break
 
+    # Extract consistency check
+    consistency = []
+    in_consistency = False
+    for line in md_text.split('\n'):
+        if '## 一致性校验' in line:
+            in_consistency = True
+            continue
+        if in_consistency and line.startswith('- '):
+            consistency.append(line[2:])
+        elif in_consistency and (line.startswith('## ') or line == '---'):
+            break
+
     # Build HTML
     html = f'<div class="meta">生成时间：{datetime.now().strftime("%Y-%m-%d %H:%M")}</div>\n'
 
@@ -153,6 +165,20 @@ def _render_briefing_card(md_text: str) -> str:
         for r in risks:
             html += f'<li>{r}</li>\n'
         html += '</ul>\n'
+
+    # Consistency check
+    if consistency:
+        html += '<details open><summary style="cursor:pointer;font-weight:bold;padding:8px 0;color:var(--yellow)">🔍 一致性校验</summary>\n<ul style="font-size:0.85em">\n'
+        for c in consistency:
+            cls = ''
+            if c.startswith('🔴'):
+                cls = ' style="color:var(--red)"'
+            elif c.startswith('❌'):
+                cls = ' style="color:var(--red)"'
+            elif c.startswith('📌'):
+                cls = ' style="color:var(--yellow)"'
+            html += f'<li{cls}>{c}</li>\n'
+        html += '</ul></details>\n'
 
     return html
 
@@ -216,7 +242,7 @@ class ReportHandler(http.server.SimpleHTTPRequestHandler):
     def _serve_index(self):
         """Generate and serve index page listing all reports."""
         items = {}
-        for sub in ['postclose', 'morning', 'institute_attention']:
+        for sub in ['postclose', 'morning', 'institute_attention', 'consistency']:
             subdir = OUTPUT / sub
             if not subdir.exists():
                 continue
@@ -224,13 +250,15 @@ class ReportHandler(http.server.SimpleHTTPRequestHandler):
                 if not d.is_dir() or not d.name.startswith('20'):
                     continue
                 if d.name not in items:
-                    items[d.name] = {'date': d.name, 'has_postclose': False, 'has_morning': False, 'has_institute': False}
+                    items[d.name] = {'date': d.name, 'has_postclose': False, 'has_morning': False, 'has_institute': False, 'has_consistency': False}
                 if sub == 'postclose' and (d / 'review.md').exists():
                     items[d.name]['has_postclose'] = True
                 if sub == 'morning' and (d / 'briefing.md').exists():
                     items[d.name]['has_morning'] = True
                 if sub == 'institute_attention' and (d / 'weekly.md').exists():
                     items[d.name]['has_institute'] = True
+                if sub == 'consistency' and (d / 'check.md').exists():
+                    items[d.name]['has_consistency'] = True
 
         # Build index HTML
         rows = []
@@ -245,6 +273,8 @@ class ReportHandler(http.server.SimpleHTTPRequestHandler):
                 links.append('<a href="/morning/{0}/full">🌅 盘前全文</a>'.format(item['date']))
             if item['has_institute']:
                 links.append('<a href="/institute_attention/{0}/weekly.md">🔬 研报热度</a>'.format(item['date']))
+            if item['has_consistency']:
+                links.append('<a href="/consistency/{0}/check.md">🔍 一致性校验</a>'.format(item['date']))
             rows.append(f"""
             <div class="date-card">
                 <div class="date">{item['date']} {dow}</div>
@@ -317,6 +347,10 @@ class ReportHandler(http.server.SimpleHTTPRequestHandler):
             title_match = re.search(r'机构研报热度周报 · (\d{4}-\d{2}-\d{2})', md_text)
             title = f"机构研报热度 · {title_match.group(1)}" if title_match else "机构研报热度"
             body = full_body
+        elif '一致性校验' in md_text:
+            title_match = re.search(r'一致性校验 · (\d{4}-\d{2}-\d{2})', md_text)
+            title = f"一致性校验 · {title_match.group(1)}" if title_match else "一致性校验"
+            body = full_body
         else:
             title = "复盘报告"
             body = full_body
@@ -348,7 +382,7 @@ def main():
     args = parser.parse_args()
 
     # Ensure output dirs exist
-    for sub in ['postclose', 'morning', 'institute_attention']:
+    for sub in ['postclose', 'morning', 'institute_attention', 'consistency']:
         (OUTPUT / sub).mkdir(parents=True, exist_ok=True)
 
     url = f"http://localhost:{args.port}"
