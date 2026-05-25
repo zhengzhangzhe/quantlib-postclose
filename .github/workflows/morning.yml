@@ -24,11 +24,6 @@ jobs:
           ANTHROPIC_AUTH_TOKEN: ${{ secrets.ANTHROPIC_AUTH_TOKEN }}
         run: python3 scripts/morning_briefing.py
 
-      - name: Push to WeChat
-        env:
-          PUSH_KEY: ${{ secrets.PUSH_KEY }}
-        run: python3 scripts/notify.py
-
       - name: Git commit & push
         run: |
           git config user.name "github-actions[bot]"
