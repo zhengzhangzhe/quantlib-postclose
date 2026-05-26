@@ -8,10 +8,15 @@ on:
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
 
 jobs:
   review:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
 
@@ -19,7 +24,7 @@ jobs:
         with:
           python-version: '3.11'
 
-      - run: pip install akshare pandas requests
+      - run: pip install akshare pandas requests markdown
 
       - name: Run postclose review
         env:
@@ -28,6 +33,18 @@ jobs:
 
       - name: Run consistency check
         run: python3 scripts/consistency_check.py
+
+      - name: Build static site
+        run: python3 scripts/build_static.py
+
+      - name: Upload pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
+        id: deployment
 
       - name: Git commit & push
         env:
