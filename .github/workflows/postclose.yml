@@ -6,6 +6,9 @@ on:
     - cron: '30 7 * * 1-5'
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   review:
     runs-on: ubuntu-latest
@@ -27,9 +30,12 @@ jobs:
         run: python3 scripts/consistency_check.py
 
       - name: Git commit & push
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          git remote set-url origin "https://${GH_TOKEN}@github.com/${{ github.repository }}.git"
           git add data/ output/
           git diff --staged --quiet || git commit -m "auto: postclose review $(date +%Y-%m-%d)"
           git push

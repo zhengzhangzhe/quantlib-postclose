@@ -6,6 +6,9 @@ on:
     - cron: '40 7 * * 5'
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   weekly:
     runs-on: ubuntu-latest
@@ -22,9 +25,12 @@ jobs:
         run: python3 scripts/institute_attention.py
 
       - name: Git commit & push
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          git remote set-url origin "https://${GH_TOKEN}@github.com/${{ github.repository }}.git"
           git add data/institute_attention/ output/institute_attention/
           git diff --staged --quiet || git commit -m "auto: institute attention weekly $(date +%Y-%m-%d)"
           git push
