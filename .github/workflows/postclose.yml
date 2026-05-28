@@ -1,9 +1,6 @@
 name: Postclose Review
 
 on:
-  schedule:
-    # Mon-Fri 21:00 CST = 13:00 UTC
-    - cron: '0 13 * * 1-5'
   workflow_dispatch:
 
 permissions:
