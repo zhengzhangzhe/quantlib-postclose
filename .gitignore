@@ -4,3 +4,4 @@ __pycache__/
 *.log
 .claude/
 dist/
+data/nga_cookie.txt
