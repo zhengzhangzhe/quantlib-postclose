@@ -1,0 +1,163 @@
+{
+  "date": "2026-05-29",
+  "results": {
+    "ddddd519": {
+      "candidates": [
+        {
+          "code": "600726",
+          "name": "华电能源",
+          "reason": "电力主线，小市值连板，今日涨停，符合加速段模式，人气高。",
+          "confidence": "high"
+        },
+        {
+          "code": "600280",
+          "name": "中央商场",
+          "reason": "一般零售次主线，小市值涨停，新鲜入池，非缩量加速。",
+          "confidence": "high"
+        },
+        {
+          "code": "600162",
+          "name": "香江控股",
+          "reason": "房地产主线，小市值连板，今日涨停，符合竞价加速选股。",
+          "confidence": "high"
+        },
+        {
+          "code": "605277",
+          "name": "新亚电子",
+          "reason": "消费电子活口，小市值涨停，量能充足，适合竞价加速。",
+          "confidence": "medium"
+        },
+        {
+          "code": "000037",
+          "name": "深南电A",
+          "reason": "电力主线，小市值连板，今日涨停，人气股加速段。",
+          "confidence": "medium"
+        }
+      ]
+    },
+    "达达鸭儿呀": {
+      "candidates": [
+        {
+          "code": "600726",
+          "name": "华电能源",
+          "reason": "电力主线龙头，涨停强势，符合打板模式。",
+          "confidence": "high"
+        },
+        {
+          "code": "600280",
+          "name": "中央商场",
+          "reason": "零售次主线龙头，涨停封板，情绪博弈标的。",
+          "confidence": "high"
+        },
+        {
+          "code": "600162",
+          "name": "香江控股",
+          "reason": "房地产次主线涨停突破，分歧转一致机会。",
+          "confidence": "medium"
+        },
+        {
+          "code": "605277",
+          "name": "新亚电子",
+          "reason": "消费电子活口涨停首板，科技属性符合擅长领域。",
+          "confidence": "medium"
+        },
+        {
+          "code": "002806",
+          "name": "华锋股份",
+          "reason": "汽车零部件涨停，新能源相关，低吸或打板机会。",
+          "confidence": "medium"
+        }
+      ]
+    },
+    "-阿狼-": {
+      "candidates": [
+        {
+          "code": "600110",
+          "name": "诺德股份",
+          "reason": "电池板块活口涨停，符合擅长电池领域，低位入场。",
+          "confidence": "high"
+        },
+        {
+          "code": "600726",
+          "name": "华电能源",
+          "reason": "电力主线涨停，趋势强势，跟随市场热点。",
+          "confidence": "high"
+        },
+        {
+          "code": "605277",
+          "name": "新亚电子",
+          "reason": "消费电子活口涨停，细分领域抱团科技，低吸机会。",
+          "confidence": "medium"
+        },
+        {
+          "code": "000037",
+          "name": "深南电A",
+          "reason": "电力主线涨停，板块效应强，跟随市场不做死多头。",
+          "confidence": "high"
+        },
+        {
+          "code": "002995",
+          "name": "天地在线",
+          "reason": "广告营销活口涨停，题材独立，日内做T建仓。",
+          "confidence": "medium"
+        }
+      ]
+    },
+    "文驹": {
+      "candidates": [
+        {
+          "code": "000657",
+          "name": "中钨高新",
+          "reason": "钨矿龙头，基本面优秀，钨价见底信号，重仓持有等主升。",
+          "confidence": "high"
+        },
+        {
+          "code": "002842",
+          "name": "翔鹭钨业",
+          "reason": "钨行业标的，放弃5月长协价预示钨价触底。",
+          "confidence": "medium"
+        },
+        {
+          "code": "600549",
+          "name": "厦门钨业",
+          "reason": "钨产业链完整，受益钨价回升，基本面扎实中长线。",
+          "confidence": "high"
+        },
+        {
+          "code": "600726",
+          "name": "华电能源",
+          "reason": "电力主线涨停，基本面改善符合行业拐点重仓策略。",
+          "confidence": "medium"
+        }
+      ]
+    },
+    "灰兔尾": {
+      "candidates": [
+        {
+          "code": "000657",
+          "name": "中钨高新",
+          "reason": "大佬持仓，有色金属低位逻辑，中长线趋势。",
+          "confidence": "high"
+        },
+        {
+          "code": "600487",
+          "name": "亨通光电",
+          "reason": "大佬持仓，光模块趋势型主线，低位逻辑。",
+          "confidence": "high"
+        },
+        {
+          "code": "600460",
+          "name": "士兰微",
+          "reason": "半导体龙头，科技主线低位建仓逻辑。",
+          "confidence": "medium"
+        },
+        {
+          "code": "000962",
+          "name": "东方钽业",
+          "reason": "有色金属，大佬擅长领域，低位技术形态中长线。",
+          "confidence": "medium"
+        }
+      ]
+    }
+  }
+}
