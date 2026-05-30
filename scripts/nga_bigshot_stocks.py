@@ -73,7 +73,7 @@ def build_cookies(s: str) -> list[dict]:
 
 
 def build_stock_map(snaps: dict) -> dict:
-    """Build stock name → code mapping from postclose snapshots."""
+    """Build stock name → code mapping from postclose snapshots. Auto-generates abbreviations."""
     name_to_code = {}
     code_to_name = {}
     for snap in snaps.values():
@@ -83,68 +83,28 @@ def build_stock_map(snaps: dict) -> dict:
             if name and code:
                 name_to_code[name] = code
                 code_to_name[code] = name
-    # Add well-known abbreviations ONLY (not all 2-char prefixes)
+
+    # Common suffixes to strip for abbreviation generation
+    SUFFIXES = ["股份", "科技", "集团", "控股", "电气", "电子", "信息",
+                "实业", "能源", "技术", "医疗", "生物", "材料", "工业",
+                "有限", "公司", "国际", "智能", "光电", "通信", "证券"]
+
     abbr_map = {}
-    # Manually add common stock abbreviations
-    known_abbrs = {
-        # 有色金属
-        "中钨": "000657", "钨高新": "000657", "铜陵": "000630",
-        "紫金": "601899", "江铜": "600362", "中铝": "601600",
-        # 通信/光模块
-        "亨通": "600487", "中际": "300308", "旭创": "300308",
-        "光迅": "002281", "烽火": "600498", "中兴": "000063",
-        "兆龙": "300913", "长飞": "601869", "华工": "000988",
-        # 半导体
-        "沪硅": "688126", "中芯": "688981", "华虹": "688347",
-        "长鑫": "688981", "寒武": "688256", "海光": "688041",
-        "北方": "002371", "华创": "002371", "中微": "688012",
-        # 消费电子/PCB
-        "立讯": "002475", "京东方": "000725", "东山": "002384",
-        "鹏鼎": "002938", "沪电": "002463", "深南": "002916",
-        "生益": "600183", "景旺": "603228", "方正": "600601",
-        # 新能源
-        "宁德": "300750", "比亚迪": "002594", "阳光": "300274",
-        "隆基": "601012", "通威": "600438", "天合": "688599",
-        # 电力/电网
-        "思源": "002028", "国电": "600795", "南瑞": "600406",
-        "平高": "600312", "许继": "000400", "特变": "600089",
-        # 机器人/自动化
-        "汇川": "300124", "埃斯顿": "002747", "绿的": "688017",
-        "拓斯达": "300607", "机器人": "300024",
-        # 汽车
-        "潍柴": "000338", "均胜": "600699", "德赛": "002920",
-        "拓普": "601689", "三花": "002050",
-        # 医药
-        "恒瑞": "600276", "药明": "603259", "百济": "688235",
-        "迈瑞": "300760", "爱尔": "300015",
-        # 化工/材料
-        "万华": "600309", "华鲁": "600426", "宝丰": "600989",
-        "龙佰": "002601", "巨化": "600160",
-        # 金融
-        "招行": "600036", "平安": "601318", "东财": "300059",
-        "同花": "300033", "中信": "600030",
-        # 白酒/消费
-        "茅台": "600519", "五粮": "000858", "泸州": "000568",
-        "汾酒": "600809", "伊利": "600887",
-        # 军工
-        "中航": "600760", "航发": "600893", "沈飞": "600760",
-        "西飞": "000768", "中国卫": "600118",
-        # 其他热门
-        "博杰": "002975", "克来": "603960", "精智": "688627",
-        "欧科": "688308", "锐科": "300747", "大族": "002008",
-        "黄河": "600172", "四方": "300179", "鼎泰": "301377",
-        "川润": "002272", "利通": "603629", "博迁": "605376",
-        "豫能": "600121", "新金": "000510", "兰石": "603169",
-        "浙富": "002266", "海陆": "002255", "宝色": "300402",
-        "科陆": "002121", "雄韬": "002733", "蔚蓝": "002245",
-    }
-    abbr_map.update(known_abbrs)
-    # 3-char prefixes are generally safe (specific enough)
     for name, code in name_to_code.items():
+        # Full name
+        abbr_map[name] = code
+        # Name without suffixes → abbreviation
+        short = name
+        for sfx in SUFFIXES:
+            if short.endswith(sfx):
+                short = short[:-len(sfx)]
+                abbr_map[short] = code
+        # 2-char prefix (only for names >= 4 chars)
+        if len(name) >= 4:
+            abbr_map[name[:2]] = code
+        # 3-char prefix
         if len(name) >= 3:
             abbr_map[name[:3]] = code
-    # Full names take priority
-    abbr_map.update(name_to_code)
     return abbr_map, code_to_name
 
 
