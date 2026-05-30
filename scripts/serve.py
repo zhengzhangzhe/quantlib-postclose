@@ -242,7 +242,7 @@ class ReportHandler(http.server.SimpleHTTPRequestHandler):
     def _serve_index(self):
         """Generate and serve index page listing all reports."""
         items = {}
-        for sub in ['postclose', 'morning', 'institute_attention', 'consistency']:
+        for sub in ['postclose', 'morning', 'institute_attention', 'consistency', 'bigshot_picks']:
             subdir = OUTPUT / sub
             if not subdir.exists():
                 continue
@@ -382,7 +382,7 @@ def main():
     args = parser.parse_args()
 
     # Ensure output dirs exist
-    for sub in ['postclose', 'morning', 'institute_attention', 'consistency']:
+    for sub in ['postclose', 'morning', 'institute_attention', 'consistency', 'bigshot_picks']:
         (OUTPUT / sub).mkdir(parents=True, exist_ok=True)
 
     url = f"http://localhost:{args.port}"
