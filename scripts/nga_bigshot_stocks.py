@@ -22,11 +22,19 @@ PROJ = Path(__file__).resolve().parent.parent
 DATA_DIR = PROJ / "data" / "nga"
 COOKIE_FILE = PROJ / "data" / "nga_cookie.txt"
 
-# Known大佬 usernames (from bigshot tracker)
-BIGSHOTS = [
-    "幸运阿sai", "灰兔尾", "文驹", "ddddd519", "达达鸭儿呀",
-    "拨小弦", "-阿狼-", "德龙骑士",
-]
+# Known大佬 and their main threads
+BIGSHOTS = {
+    "幸运阿sai": ["46870606"],       # 沪硅产业 (主帖)
+    "文驹":     ["46756363", "45974302"],  # 中钨高新 + 自立自强
+    "灰兔尾":   ["46756363", "45974302"],  # 中钨高新 + 自立自强 (非OP, 但常驻)
+    "ddddd519": ["44790803", "46292895", "46350659"],  # 纯超短 + 5000元 + 没有慧根
+    "达达鸭儿呀": ["46350659"],       # 没有慧根就要会跟
+    "拨小弦":   ["40795363", "45502551"],  # 每周实盘 + 适合炒短
+    "-阿狼-":   ["45974302"],         # 自立自强
+    "德龙骑士": ["38876056", "46307631"],  # 2023实盘 + 霍尔木兹
+    # 其他活跃熱帖追加扫描
+    "_hot_threads": ["46581190", "46872529", "46553777", "45902809", "45905087"],
+}
 
 # Stock detection: 6-digit codes
 STOCK_CODE_RE = re.compile(r'(?<!\d)(00|30|60|68)\d{4}(?!\d)')
@@ -258,20 +266,17 @@ def main():
         ctx.add_cookies(build_cookies(cookie))
         page = ctx.new_page()
 
-        # Get threads
+        # Get target threads (大佬主帖 + 热帖)
+        all_target_tids = set()
+        for user, user_tids in BIGSHOTS.items():
+            if user == "_hot_threads": continue
+            for tid in user_tids: all_target_tids.add(tid)
+        for tid in BIGSHOTS.get("_hot_threads", []): all_target_tids.add(tid)
+
         tids = []
-        for pg in range(1, args.forum_pages + 1):
-            try:
-                page.goto(f"https://bbs.nga.cn/thread.php?fid=706&page={pg}",
-                          timeout=10000, wait_until="domcontentloaded")
-                page.wait_for_timeout(800)
-            except: break
-            for link in page.query_selector_all("a.topic"):
-                href = link.get_attribute("href") or ""
-                m = re.search(r'tid=(\d+)', href)
-                if m and m.group(1) not in [t[0] for t in tids]:
-                    tids.append((m.group(1), link.inner_text()[:60]))
-        print(f"获取 {len(tids)} 个帖子")
+        for tid in all_target_tids:
+            tids.append((tid, f"主帖#{tid[:6]}"))
+        print(f"目标 {len(tids)} 个帖子 (大佬主帖)")
 
         # Scan threads — collect大佬's own posts
         author_idx = {}  # post index → author name mapping
@@ -289,10 +294,15 @@ def main():
                 for pg_m in re.finditer(r'page=(\d+)', href):
                     max_pg = max(max_pg, int(pg_m.group(1)))
 
-            pages = {1, 2}
+            pages = {1, 2, 3, 4, 5}
             for offset in range(args.tail_pages):
-                pg = min(max_pg - offset, 200)
-                if pg > 2: pages.add(pg)
+                pg = min(max_pg - offset, 300)
+                if pg > 5: pages.add(pg)
+            if max_pg > 100:
+                mid = max_pg // 2
+                for offset in range(10):
+                    pg = min(mid + offset, 300)
+                    if pg > 5 and pg < max_pg: pages.add(pg)
 
             for pg in sorted(pages):
                 try:
