@@ -17,6 +17,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Skip weekends
+        run: |
+          DOW=$(date +%u)
+          if [ "$DOW" -ge 6 ]; then
+            echo "Weekend, skipping"
+            exit 0
+          fi
+
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
@@ -38,35 +46,7 @@ jobs:
           fi
 
       - name: Generate screener report
-        run: |
-          python3 -c "
-          import json
-          from pathlib import Path
-          from datetime import datetime, timedelta
-          today = datetime.now().strftime('%Y-%m-%d')
-          data_file = Path('data/nga/screen_results.json')
-          if not data_file.exists():
-              print('No screener data, skipping')
-              exit(0)
-          data = json.loads(data_file.read_text())
-          # Show week range
-          d = datetime.strptime(data['date'], '%Y-%m-%d')
-          week_start = (d - timedelta(days=d.weekday())).strftime('%m/%d')
-          week_end = (d + timedelta(days=4-d.weekday())).strftime('%m/%d')
-          lines = [f'# 大佬海选周报 · {data[\"date\"]} ({week_start}~{week_end})', '',
-                   '| 大佬 | 候选 | Top 3 |',
-                   '|------|------|-------|']
-          for key, label in [('d','d佬(超短)'),('wj','文驹(钨/有色)'),('tl','兔佬(低位)'),
-                             ('yl','鸭佬(打板)'),('sai','sai佬(半导)'),('wolf','狼大(科技)')]:
-              cands = data.get(key, [])
-              top3 = ' · '.join(f\"{c['name']}({c['code']})\" for c in cands[:3]) if cands else '-'
-              lines.append(f'| {label} | {len(cands)} | {top3} |')
-          report = '\n'.join(lines)
-          out = Path('output/bigshot_screener') / f'{data[\"date\"]}.md'
-          out.parent.mkdir(parents=True, exist_ok=True)
-          out.write_text(report)
-          print(f'Screener report: {out}')
-          "
+        run: python3 scripts/generate_screener_report.py
 
       - name: Run consistency check
         run: python3 scripts/consistency_check.py || echo "校验跳过(无简报数据)"
