@@ -51,26 +51,52 @@ def match_sector(name, keywords):
             if kw in name: return sector
     return ""
 
-# ── d佬: 小市值连板加速 ──
+# ── d佬: uses snapshot limit-up pool (has float_mkt + consecutive) ──
 def screen_dl(stocks):
+    # Load snapshot for detail data
+    try:
+        snap = json.loads(sorted((PROJ/"data"/"postclose").glob("*/snapshot.json"))[-1].read_text())
+        lu = {str(s["code"]).split(".")[0].zfill(6): s for s in snap["limit_up_stocks"]}
+    except: lu = {}
+
     candidates = []
     for s in stocks:
+        code = s["code"]
+        sd = lu.get(code, {})
+        if not sd: continue  # must be in limit-up pool
+
         score = 0; reasons = []
-        if s["pct"] >= 9.5: score += 3; reasons.append("涨停")
-        elif s["pct"] >= 5: score += 2; reasons.append("大阳线")
-        elif s["pct"] >= 3: score += 1; reasons.append("中阳")
-        else: continue
-        if not (5 <= s["turnover"] <= 30): continue
-        score += 2; reasons.append(f"换手{s['turnover']:.0f}%")
+        pct = sd.get("pct_chg",0)
+        turnover = sd.get("turnover",0)
+        f_mkt = sd.get("float_mkt",0)
+        net_flow = sd.get("net_flow",0)
+        consecutive = sd.get("consecutive",0)
+        break_cnt = sd.get("break_cnt",0)
+        first_time = str(sd.get("first_time",""))
 
-        f_mkt = s["float_mkt"]
-        if f_mkt < 50e8: score += 3; reasons.append(f"市值{f_mkt/1e8:.0f}亿")
-        elif f_mkt < 100e8: score += 2; reasons.append(f"市值{f_mkt/1e8:.0f}亿")
-        elif f_mkt < 200e8: score += 1
+        # 连板
+        if consecutive >= 2: score += 3; reasons.append(f"{consecutive}连板")
+        elif consecutive == 1: score += 1; reasons.append("首板")
+        # 市值 <100亿
+        if f_mkt < 30e8: score += 3; reasons.append(f"市值{f_mkt/1e8:.0f}亿")
+        elif f_mkt < 60e8: score += 2; reasons.append(f"市值{f_mkt/1e8:.0f}亿")
+        elif f_mkt < 100e8: score += 1
         else: continue
+        # 换手
+        if 5 <= turnover <= 15: score += 2; reasons.append(f"换手{turnover:.1f}%")
+        elif 3 <= turnover <= 25: score += 1
+        else: continue
+        # 封板时间
+        try:
+            ft = int(str(first_time).zfill(6))
+            if ft <= 94000: score += 2; reasons.append("早盘封板")
+        except: pass
+        # 非一字板
+        if break_cnt == 0 and turnover < 3: continue
+        # 资金
+        if net_flow > 0: score += 1; reasons.append("资金流")
 
-        if s["net_flow"] > 0: score += 1; reasons.append("资金流入")
-        if score >= 5: candidates.append({**s,"score":score,"reasons":reasons})
+        if score >= 5: candidates.append({**s,"score":score,"reasons":reasons,"float_mkt":f_mkt})
     return sorted(candidates, key=lambda x: -x["score"])
 
 # ── 文驹: 钨/有色/PCB ──
