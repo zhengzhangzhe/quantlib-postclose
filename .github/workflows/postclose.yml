@@ -36,19 +36,21 @@ jobs:
           ANTHROPIC_AUTH_TOKEN: ${{ secrets.ANTHROPIC_AUTH_TOKEN }}
         run: python3 scripts/postclose_review.py
 
-      - name: Run bigshot screener (Friday only)
+      - name: Run bigshot screener (daily)
+        run: python3 scripts/bigshot_screener.py
+
+      - name: Generate screener report (daily)
+        run: python3 scripts/generate_screener_report.py
+
+      - name: Run bigshot tracker (Friday only)
         run: |
           DOW=$(date +%u)
           if [ "$DOW" -eq 5 ]; then
-            python3 scripts/bigshot_screener.py
+            python3 scripts/nga_bigshot.py
+            python3 scripts/generate_bigshot_profiles.py
           else
-            echo "Skipping screener (not Friday, DOW=$DOW)"
+            echo "Skipping profiles (not Friday)"
           fi
-
-      - name: Generate reports
-        run: |
-          python3 scripts/generate_screener_report.py
-          python3 scripts/generate_bigshot_profiles.py
 
       - name: Run consistency check
         run: python3 scripts/consistency_check.py || echo "校验跳过(无简报数据)"
@@ -73,7 +75,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git remote set-url origin "https://${GH_TOKEN}@github.com/${{ github.repository }}.git"
-          git add data/ output/ data/nga/
+          git add data/ output/ data/nga/screen_results/
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else
