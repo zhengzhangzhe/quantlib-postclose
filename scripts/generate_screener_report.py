@@ -115,10 +115,12 @@ def generate():
 
     L.append(f"*生成于 {datetime.now().strftime('%Y-%m-%d %H:%M')} · 每周五更新*")
 
-    out = PROJ / "output" / "bigshot_screener" / f"{date}.md"
-    out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text("\n".join(L))
-    print(f"Report: {out}")
+    report = "\n".join(L)
+    for sub in ["bigshot_screener", "bigshot_picks"]:
+        out = PROJ / "output" / sub / f"{date}.md"
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(report)
+    print(f"Reports: bigshot_screener & bigshot_picks / {date}.md")
 
 
 if __name__ == "__main__":
