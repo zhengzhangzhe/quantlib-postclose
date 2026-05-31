@@ -45,8 +45,10 @@ jobs:
             echo "Skipping screener (not Friday, DOW=$DOW)"
           fi
 
-      - name: Generate screener report
-        run: python3 scripts/generate_screener_report.py
+      - name: Generate reports
+        run: |
+          python3 scripts/generate_screener_report.py
+          python3 scripts/generate_bigshot_profiles.py
 
       - name: Run consistency check
         run: python3 scripts/consistency_check.py || echo "校验跳过(无简报数据)"
