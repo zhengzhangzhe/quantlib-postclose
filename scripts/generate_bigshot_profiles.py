@@ -30,6 +30,12 @@ BIGSHOT_MAP = [
 ]
 
 
+def load_stock_map():
+    map_file = PROJ / "data" / "nga" / "stock_abbr_map.json"
+    if map_file.exists():
+        return json.loads(map_file.read_text())
+    return {}
+
 def collect_picks(user):
     pf = PROJ / "data" / "nga" / "bigshot_content" / f"{user}.json"
     if not pf.exists():
@@ -71,7 +77,15 @@ def generate():
 
         if own:
             L.append(f"### 📝 帖子里推荐过的股票 ({len(own)}只)")
-            L.append(f"{' · '.join(sorted(own)[:20])}")
+            stock_map = load_stock_map()
+            items = []
+            for abbr in sorted(own)[:20]:
+                info = stock_map.get(abbr)
+                if info:
+                    items.append(f"{info[0]}({info[1]})")
+                else:
+                    items.append(abbr)
+            L.append(" · ".join(items))
         else:
             L.append(f"### 📝 帖子里推荐过的股票")
             L.append("*未检测到股票提及*")

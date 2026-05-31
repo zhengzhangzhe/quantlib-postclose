@@ -91,7 +91,16 @@ def generate():
         # Part 1:大佬's own picks
         if own:
             L.append(f"### 📝 帖子里推荐过的 ({len(own)}只)")
-            L.append(f"{' · '.join(sorted(own)[:15])}")
+            # Load stock name map
+            stock_map = {}
+            map_file = PROJ / "data" / "nga" / "stock_abbr_map.json"
+            if map_file.exists():
+                stock_map = json.loads(map_file.read_text())
+            items = []
+            for abbr in sorted(own)[:15]:
+                info = stock_map.get(abbr)
+                items.append(f"{info[0]}({info[1]})" if info else abbr)
+            L.append(" · ".join(items))
         else:
             L.append(f"### 📝 帖子里推荐过的")
             L.append("*未检测到*")
