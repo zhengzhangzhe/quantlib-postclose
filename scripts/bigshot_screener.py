@@ -236,18 +236,24 @@ def main():
             print(f"  {i}. {c['name']}({c['code']}) {c['pct']:+.1f}%{mkt_str} {c.get('sector','')}")
         print()
 
-    out = PROJ / "data" / "nga" / "screen_results.json"
+    today = datetime.now().strftime("%Y-%m-%d")
+    out = PROJ / "data" / "nga" / "screen_results" / f"{today}.json"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    # Also save as latest for report generator
+    out_latest = PROJ / "data" / "nga" / "screen_results.json"
     def pack(cands, n=20):
         return [{"name":c["name"],"code":c["code"],"pct":c["pct"],
                  "reasons":c.get("reasons",[]),"sector":c.get("sector",""),
                  "score":c.get("score",0)} for c in cands[:n]]
-    with open(out, "w") as f:
-        json.dump({"date":datetime.now().strftime("%Y-%m-%d"),
-            "d": pack(screen_dl(stocks)), "wj": pack(screen_wj(stocks)),
-            "tl": pack(screen_tl(stocks)), "yl": pack(screen_yl(stocks)),
-            "sai": pack(screen_sai(stocks)), "wolf": pack(screen_wolf(stocks)),
-        }, f, ensure_ascii=False, indent=2)
-    print(f"Saved: {out}")
+    result = {"date": today,
+        "d": pack(screen_dl(stocks)), "wj": pack(screen_wj(stocks)),
+        "tl": pack(screen_tl(stocks)), "yl": pack(screen_yl(stocks)),
+        "sai": pack(screen_sai(stocks)), "wolf": pack(screen_wolf(stocks)),
+    }
+    for path in [out, out_latest]:
+        with open(path, "w") as f:
+            json.dump(result, f, ensure_ascii=False, indent=2)
+    print(f"Saved: {out} & {out_latest}")
 
 if __name__ == "__main__":
     main()
