@@ -51,6 +51,76 @@ def screen_wj(stocks):
         if score >= 3: candidates.append({**s, "score": score, "reasons": reasons, "sector": sector})
     return sorted(candidates, key=lambda x: -x["score"])
 
+# ── 兔佬: 有色/半导体, 中长线低位建仓 ──
+TL_KW = {"有色":["中钨","钨","铜陵","紫金","东方钽","锗","锡","镍","锂业","锆","厦门钨"],
+         "半导体":["士兰微","中芯","华虹","北方华创","中微","韦尔","兆易","卓胜微","闻泰","三安","长电"],
+         "光通信":["亨通","中际","旭创","光迅","长飞","烽火","天孚","新易盛"]}
+def screen_tl(stocks):
+    cand = []
+    for s in stocks:
+        sec = ""; n = s["name"]
+        for g, ks in TL_KW.items():
+            for k in ks:
+                if k in n: sec = g; break
+            if sec: break
+        if not sec: continue
+        sc = 0; rs = [sec]
+        if -3 <= s["pct"] <= 3: sc += 4; rs.append("横盘低位")
+        elif -5 <= s["pct"] < -3: sc += 3; rs.append("回调低吸")
+        elif 3 < s["pct"] <= 6: sc += 2
+        else: continue
+        if 1 <= s["turnover"] <= 6: sc += 2; rs.append("缩量蓄力")
+        if s["net_flow"] > 0: sc += 1
+        if sc >= 4: cand.append({**s,"score":sc,"reasons":rs,"sector":sec})
+    return sorted(cand, key=lambda x: -x["score"])
+
+# ── 鸭佬: 航天/新能源/科技, 打板+低吸 ──
+YL_KW = {"航天军工":["航发","中航","航天","沈飞","西飞","洪都","中国卫","光电","北斗"],
+         "新能源":["宁德","比亚迪","阳光","隆基","通威","天合","亿纬","国轩","赣锋","华友"],
+         "科技":["中芯","寒武","海光","科大","浪潮","中科曙光","金山","广联达"],
+         "汽车":["潍柴","德赛","拓普","赛力","江淮","长城","长安"]}
+def screen_yl(stocks):
+    cand = []
+    for s in stocks:
+        sec = ""; n = s["name"]
+        for g, ks in YL_KW.items():
+            for k in ks:
+                if k in n: sec = g; break
+            if sec: break
+        if not sec: continue
+        sc = 0; rs = [sec]
+        if s["pct"] >= 9.5: sc += 3; rs.append("涨停")
+        elif s["pct"] >= 5: sc += 1; rs.append("大阳")
+        elif -3 <= s["pct"] <= 0: sc += 2; rs.append("回调低吸")
+        else: continue
+        if 5 <= s["turnover"] <= 25: sc += 2
+        if s["net_flow"] > 0: sc += 1
+        if sc >= 3: cand.append({**s,"score":sc,"reasons":rs,"sector":sec})
+    return sorted(cand, key=lambda x: -x["score"])
+
+# ── sai佬: 半导体材料, 低位+逻辑催化 ──
+SAI_KW = {"半导体材料":["沪硅","立昂微","TCL中环","有研","江丰","雅克","南大","上海新阳","晶瑞","容大"],
+          "设备":["北方华创","中微","盛美","拓荆","长川","精测","至纯"],
+          "封装":["长电","通富","华天","晶方","甬矽"],
+          "硅片":["中环","立昂微","沪硅","中晶","神工"]}
+def screen_sai(stocks):
+    cand = []
+    for s in stocks:
+        sec = ""; n = s["name"]
+        for g, ks in SAI_KW.items():
+            for k in ks:
+                if k in n: sec = g; break
+            if sec: break
+        if not sec: continue
+        sc = 0; rs = [sec]
+        if -5 <= s["pct"] <= 2: sc += 4; rs.append("低位建仓区")
+        elif 2 < s["pct"] <= 5: sc += 3; rs.append("温和启动")
+        else: continue
+        if 1 <= s["turnover"] <= 8: sc += 2; rs.append("缩量酝酿")
+        if s["net_flow"] > 0: sc += 1
+        if sc >= 4: cand.append({**s,"score":sc,"reasons":rs,"sector":sec})
+    return sorted(cand, key=lambda x: -x["score"])
+
 # ── 狼大: 科技/军工/半导体 ──
 WOLF_KEYWORDS = {
     "半导体": ["中芯","华虹","北方华创","中微","寒武","海光","士兰微","闻泰"],
@@ -95,7 +165,10 @@ def main():
     
     print(f"数据: {len(stocks)} 只\n")
     
-    for name, fn in [("d佬(超短连板)",screen_dl),("文驹(钨/有色/PCB)",screen_wj),("狼大(科技/军工)",screen_wolf)]:
+    screens = [("d佬(超短)",screen_dl),("文驹(钨/有色)",screen_wj),
+               ("兔佬(有色/半导)",screen_tl),("鸭佬(航天/新能源)",screen_yl),
+               ("sai佬(半导材料)",screen_sai),("狼大(科技)",screen_wolf)]
+    for name, fn in screens:
         results = fn(stocks)
         print(f"=== {name}: {len(results)} 只 ===")
         for i, c in enumerate(results[:8], 1):
@@ -109,6 +182,9 @@ def main():
             "date": datetime.now().strftime("%Y-%m-%d"),
             "d_candidates": [{"name":c["name"],"code":c["code"],"pct":c["pct"]} for c in screen_dl(stocks)[:20]],
             "wj_candidates": [{"name":c["name"],"code":c["code"],"pct":c["pct"]} for c in screen_wj(stocks)[:20]],
+            "tl_candidates": [{"name":c["name"],"code":c["code"],"pct":c["pct"]} for c in screen_tl(stocks)[:20]],
+            "yl_candidates": [{"name":c["name"],"code":c["code"],"pct":c["pct"]} for c in screen_yl(stocks)[:20]],
+            "sai_candidates": [{"name":c["name"],"code":c["code"],"pct":c["pct"]} for c in screen_sai(stocks)[:20]],
             "wolf_candidates": [{"name":c["name"],"code":c["code"],"pct":c["pct"]} for c in screen_wolf(stocks)[:20]],
         }, f, ensure_ascii=False, indent=2)
     print(f"Saved: {out}")
