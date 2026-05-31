@@ -28,17 +28,32 @@ jobs:
           ANTHROPIC_AUTH_TOKEN: ${{ secrets.ANTHROPIC_AUTH_TOKEN }}
         run: python3 scripts/postclose_review.py
 
-      - name: Run bigshot screener
-        run: python3 scripts/bigshot_screener.py
+      - name: Run bigshot screener (Friday only)
+        run: |
+          DOW=$(date +%u)
+          if [ "$DOW" -eq 5 ]; then
+            python3 scripts/bigshot_screener.py
+          else
+            echo "Skipping screener (not Friday, DOW=$DOW)"
+          fi
 
       - name: Generate screener report
         run: |
           python3 -c "
           import json
           from pathlib import Path
-          from datetime import datetime
-          data = json.loads(Path('data/nga/screen_results.json').read_text())
-          lines = [f'# 大佬海选日报 · {data[\"date\"]}', '',
+          from datetime import datetime, timedelta
+          today = datetime.now().strftime('%Y-%m-%d')
+          data_file = Path('data/nga/screen_results.json')
+          if not data_file.exists():
+              print('No screener data, skipping')
+              exit(0)
+          data = json.loads(data_file.read_text())
+          # Show week range
+          d = datetime.strptime(data['date'], '%Y-%m-%d')
+          week_start = (d - timedelta(days=d.weekday())).strftime('%m/%d')
+          week_end = (d + timedelta(days=4-d.weekday())).strftime('%m/%d')
+          lines = [f'# 大佬海选周报 · {data[\"date\"]} ({week_start}~{week_end})', '',
                    '| 大佬 | 候选 | Top 3 |',
                    '|------|------|-------|']
           for key, label in [('d','d佬(超短)'),('wj','文驹(钨/有色)'),('tl','兔佬(低位)'),
