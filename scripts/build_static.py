@@ -180,7 +180,7 @@ def build_site():
     DIST.mkdir(parents=True, exist_ok=True)
 
     items = {}
-    for sub in ['postclose', 'morning', 'institute_attention', 'consistency', 'bigshot_picks']:
+    for sub in ['postclose', 'morning', 'institute_attention', 'consistency', 'bigshot_picks', 'bigshot_screener']:
         subdir = OUTPUT / sub
         if not subdir.exists():
             continue
@@ -239,7 +239,7 @@ def build_site():
 <div class="date-list">{''.join(rows)}
 <div class="date-card" style="border-color:var(--green)">
     <div class="date">📌 大佬推荐</div>
-    <div class="stats"><a href="/quantlib-postclose/p/bigshot.html">查看最新报告</a></div>
+    <div class="stats"><a href="/quantlib-postclose/p/bigshot.html">画像报告</a> · <a href="/quantlib-postclose/p/screener.html">每日海选</a></div>
 </div>
 </div>
 <div class="footer">自动生成 · 仅供参考，不构成投资建议</div>
@@ -279,6 +279,16 @@ def build_site():
                 # Full content
                 with open(out_dir / 'full.html', 'w') as f:
                     f.write(wrap_page(f"盘前简报全文 · {d}", full))
+
+    # Build screener page
+    scr_dir = OUTPUT / "bigshot_screener"
+    if scr_dir.exists():
+        latest = sorted(scr_dir.glob("*.md"), reverse=True)
+        if latest:
+            body = md_to_html(latest[0].read_text())
+            html = wrap_page("每日海选", body)
+            with open(page_dir / "screener.html", "w") as f:
+                f.write(html)
 
     # Build bigshot picks page (latest only)
     bsp_dir = OUTPUT / "bigshot_picks"

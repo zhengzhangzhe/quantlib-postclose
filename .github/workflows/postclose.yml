@@ -28,6 +28,31 @@ jobs:
           ANTHROPIC_AUTH_TOKEN: ${{ secrets.ANTHROPIC_AUTH_TOKEN }}
         run: python3 scripts/postclose_review.py
 
+      - name: Run bigshot screener
+        run: python3 scripts/bigshot_screener.py
+
+      - name: Generate screener report
+        run: |
+          python3 -c "
+          import json
+          from pathlib import Path
+          from datetime import datetime
+          data = json.loads(Path('data/nga/screen_results.json').read_text())
+          lines = [f'# 大佬海选日报 · {data[\"date\"]}', '',
+                   '| 大佬 | 候选 | Top 3 |',
+                   '|------|------|-------|']
+          for key, label in [('d','d佬(超短)'),('wj','文驹(钨/有色)'),('tl','兔佬(低位)'),
+                             ('yl','鸭佬(打板)'),('sai','sai佬(半导)'),('wolf','狼大(科技)')]:
+              cands = data.get(key, [])
+              top3 = ' · '.join(f\"{c['name']}({c['code']})\" for c in cands[:3]) if cands else '-'
+              lines.append(f'| {label} | {len(cands)} | {top3} |')
+          report = '\n'.join(lines)
+          out = Path('output/bigshot_screener') / f'{data[\"date\"]}.md'
+          out.parent.mkdir(parents=True, exist_ok=True)
+          out.write_text(report)
+          print(f'Screener report: {out}')
+          "
+
       - name: Run consistency check
         run: python3 scripts/consistency_check.py
 
@@ -50,7 +75,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git remote set-url origin "https://${GH_TOKEN}@github.com/${{ github.repository }}.git"
-          git add data/ output/
+          git add data/ output/ data/nga/
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else
