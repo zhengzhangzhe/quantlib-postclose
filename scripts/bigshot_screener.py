@@ -88,14 +88,17 @@ def screen_wj(stocks):
         sec = match_sector(s["name"], WJ_KW)
         if not sec: continue
         sc = 0; rs = [sec]
+        # 文驹: 行业拐点重仓, 温和上涨+缩量+低换手=蓄力阶段
         if 0 <= s["pct"] <= 5: sc += 3; rs.append("温和上涨")
-        elif 5 < s["pct"] <= 9.5: sc += 2
-        elif s["pct"] > 9.5: sc += 1
-        else: sc += 1
-        if 1 <= s["turnover"] <= 8: sc += 2
-        elif 8 < s["turnover"] <= 15: sc += 1
+        elif 5 < s["pct"] <= 8: sc += 1; rs.append(f"+{s['pct']:.1f}%")
+        else: continue  # 大涨或大跌都不符合拐点入场
+        if 1 <= s["turnover"] <= 5: sc += 3; rs.append(f"换手{s['turnover']:.1f}%")
+        elif 5 < s["turnover"] <= 8: sc += 1
+        else: continue  # >8% 过热
+        # 市值: 偏好50亿以上容量标的
+        if s["float_mkt"] > 50e8: sc += 2; rs.append(f"容量{s['float_mkt']/1e8:.0f}亿")
         if s["net_flow"] > 0: sc += 1
-        if sc >= 3: cand.append({**s,"score":sc,"reasons":rs,"sector":sec})
+        if sc >= 6: cand.append({**s,"score":sc,"reasons":rs,"sector":sec})
     return sorted(cand, key=lambda x: -x["score"])
 
 # ── 兔佬: 有色/半导体, 中长线低位 ──
