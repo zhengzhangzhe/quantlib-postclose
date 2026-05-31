@@ -239,7 +239,7 @@ def build_site():
 <div class="date-list">{''.join(rows)}
 <div class="date-card" style="border-color:var(--green)">
     <div class="date">📌 大佬推荐</div>
-    <div class="stats"><a href="/quantlib-postclose/p/bigshot.html">画像报告</a> · <a href="/quantlib-postclose/p/screener.html">每日海选</a></div>
+    <div class="stats"><a href="/quantlib-postclose/p/bigshot.html">画像报告</a> · <a href="/quantlib-postclose/p/screener.html">每周海选</a></div>
 </div>
 </div>
 <div class="footer">自动生成 · 仅供参考，不构成投资建议</div>
