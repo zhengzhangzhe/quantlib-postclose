@@ -237,14 +237,15 @@ def main():
         print()
 
     out = PROJ / "data" / "nga" / "screen_results.json"
+    def pack(cands, n=20):
+        return [{"name":c["name"],"code":c["code"],"pct":c["pct"],
+                 "reasons":c.get("reasons",[]),"sector":c.get("sector",""),
+                 "score":c.get("score",0)} for c in cands[:n]]
     with open(out, "w") as f:
         json.dump({"date":datetime.now().strftime("%Y-%m-%d"),
-            "d": [{"name":c["name"],"code":c["code"]} for c in screen_dl(stocks)[:20]],
-            "wj": [{"name":c["name"],"code":c["code"]} for c in screen_wj(stocks)[:20]],
-            "tl": [{"name":c["name"],"code":c["code"]} for c in screen_tl(stocks)[:20]],
-            "yl": [{"name":c["name"],"code":c["code"]} for c in screen_yl(stocks)[:20]],
-            "sai": [{"name":c["name"],"code":c["code"]} for c in screen_sai(stocks)[:20]],
-            "wolf": [{"name":c["name"],"code":c["code"]} for c in screen_wolf(stocks)[:20]],
+            "d": pack(screen_dl(stocks)), "wj": pack(screen_wj(stocks)),
+            "tl": pack(screen_tl(stocks)), "yl": pack(screen_yl(stocks)),
+            "sai": pack(screen_sai(stocks)), "wolf": pack(screen_wolf(stocks)),
         }, f, ensure_ascii=False, indent=2)
     print(f"Saved: {out}")
 
