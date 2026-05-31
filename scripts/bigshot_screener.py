@@ -109,21 +109,29 @@ WJ_KW = {
     "光通信": ["亨通光电","中际旭创","光迅科技","长飞光纤","烽火通信","华工科技","兆龙互连"],
 }
 def screen_wj(stocks):
+    # 钨板块趋势信号 (ETF proxy)
+    WU_PROXIES = {"厦门钨业","中钨高新","章源钨业","翔鹭钨业","江钨装备"}
+    wu_pcts = [s["pct"] for s in stocks if s["name"] in WU_PROXIES]
+    wu_pos = sum(1 for p in wu_pcts if p > 0)
+    wu_avg = sum(wu_pcts)/len(wu_pcts) if wu_pcts else 0
+    wu_signal = wu_avg > 1 and wu_pos >= len(wu_pcts)//2
+
     cand = []
     for s in stocks:
         sec = match_sector(s["name"], WJ_KW)
         if not sec: continue
         sc = 0; rs = [sec]
-        # 文驹: 行业拐点重仓, 温和上涨+缩量+低换手=蓄力阶段
+        # 文驹: 行业拐点重仓
         if 0 <= s["pct"] <= 5: sc += 3; rs.append("温和上涨")
         elif 5 < s["pct"] <= 8: sc += 1; rs.append(f"+{s['pct']:.1f}%")
-        else: continue  # 大涨或大跌都不符合拐点入场
+        else: continue
         if 1 <= s["turnover"] <= 5: sc += 3; rs.append(f"换手{s['turnover']:.1f}%")
         elif 5 < s["turnover"] <= 8: sc += 1
-        else: continue  # >8% 过热
-        # 市值: 偏好50亿以上容量标的
+        else: continue
         if s["float_mkt"] > 50e8: sc += 2; rs.append(f"容量{s['float_mkt']/1e8:.0f}亿")
         if s["net_flow"] > 0: sc += 1
+        # 钨板块趋势加分
+        if wu_signal and sec == "钨矿": sc += 3; rs.append("钨板块走强")
         if sc >= 6: cand.append({**s,"score":sc,"reasons":rs,"sector":sec})
     return sorted(cand, key=lambda x: -x["score"])
 
