@@ -78,14 +78,14 @@ def generate():
         if own:
             L.append(f"### 📝 帖子里推荐过的股票 ({len(own)}只)")
             stock_map = load_stock_map()
-            items = []
-            for abbr in sorted(own)[:20]:
+            L.append("| # | 股票 | 代码 |")
+            L.append("|---|------|------|")
+            for i, abbr in enumerate(sorted(own)[:20], 1):
                 info = stock_map.get(abbr)
                 if info:
-                    items.append(f"{info[0]}({info[1]})")
+                    L.append(f"| {i} | {info[0]} | {info[1]} |")
                 else:
-                    items.append(abbr)
-            L.append(" · ".join(items))
+                    L.append(f"| {i} | {abbr} | - |")
         else:
             L.append(f"### 📝 帖子里推荐过的股票")
             L.append("*未检测到股票提及*")
