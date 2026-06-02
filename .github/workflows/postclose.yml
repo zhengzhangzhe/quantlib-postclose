@@ -29,7 +29,9 @@ jobs:
         with:
           python-version: '3.11'
 
-      - run: pip install akshare pandas requests markdown
+      - run: pip install akshare pandas requests markdown playwright
+      - run: playwright install-deps chromium || true
+      - run: playwright install chromium
 
       - name: Run postclose review
         env:
@@ -41,6 +43,14 @@ jobs:
 
       - name: Generate screener report (daily)
         run: python3 scripts/generate_screener_report.py
+
+      - name: Setup NGA cookie
+        run: echo "${{ secrets.NGA_COOKIE }}" > data/nga_cookie.txt
+        continue-on-error: true
+
+      - name: Scan bigshot posts (daily)
+        run: python3 scripts/nga_bigshot_stocks.py || echo "NGA scan skipped"
+        continue-on-error: true
 
       - name: Generate profiles report (daily)
         run: python3 scripts/generate_bigshot_profiles.py
