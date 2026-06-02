@@ -30,6 +30,7 @@ jobs:
           python-version: '3.11'
 
       - run: pip install akshare pandas requests markdown playwright
+      - run: playwright install-deps chromium
       - run: playwright install chromium
 
       - name: Run postclose review
