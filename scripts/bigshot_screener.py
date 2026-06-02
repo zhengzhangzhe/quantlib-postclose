@@ -196,6 +196,7 @@ def screen_sai(stocks):
         else: continue
         if 1 <= s["turnover"] <= 8: sc += 2; rs.append("缩量酝酿")
         if s["net_flow"] > 0: sc += 1
+        sc += _sai_bonus(s["name"])
         if sc >= 4: cand.append({**s,"score":sc,"reasons":rs,"sector":sec})
     return sorted(cand, key=lambda x: -x["score"])
 
@@ -219,6 +220,15 @@ def screen_wolf(stocks):
         if s["net_flow"] > 1e7: sc += 1
         if sc >= 4: cand.append({**s,"score":sc,"reasons":rs,"sector":sec})
     return sorted(cand, key=lambda x: -x["score"])
+
+# ── sai佬主题加成（AI算力/光模块/半导体国产化） ──
+SAI_THEME = ["光模块","光通信","中际旭创","天孚通信","新易盛","太辰光","剑桥科技",
+             "中芯国际","寒武纪","海光信息","北方华创","中微公司","长电科技",
+             "通富微电","华天科技","沪硅产业","立昂微","士兰微","澜起科技",
+             "兆易创新","卓胜微","韦尔股份","圣邦股份","长川科技","精测电子",
+             "浪潮信息","中科曙光","工业富联","中兴通讯","烽火通信"]
+def _sai_bonus(name):
+    return 2 if name in SAI_THEME else 0
 
 # ── Main ──
 def main():
