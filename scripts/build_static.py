@@ -239,7 +239,7 @@ def build_site():
 <div class="date-list">{''.join(rows)}
 <div class="date-card" style="border-color:var(--green)">
     <div class="date">📌 大佬画像</div>
-    <div class="stats"><a href="/quantlib-postclose/p/sai.html">sai佬</a> · <a href="/quantlib-postclose/p/灰兔尾.html">兔佬</a> · <a href="/quantlib-postclose/p/文驹.html">文驹</a> · <a href="/quantlib-postclose/p/-阿狼-.html">狼大</a> · <a href="/quantlib-postclose/p/F佬.html">F佬</a> · <a href="/quantlib-postclose/p/喜帖街QAQ.html">喜帖街</a></div>
+    <div class="stats"><a href="/quantlib-postclose/p/幸运阿sai.html">sai佬</a> · <a href="/quantlib-postclose/p/灰兔尾.html">兔佬</a> · <a href="/quantlib-postclose/p/文驹.html">文驹</a> · <a href="/quantlib-postclose/p/-阿狼-.html">狼大</a> · <a href="/quantlib-postclose/p/F佬.html">F佬</a> · <a href="/quantlib-postclose/p/喜帖街QAQ.html">喜帖街</a></div>
 	    <div class="stats" style="margin-top:4px"><a href="/quantlib-postclose/p/screener.html">📊 每周海选</a></div>
 	</div>
 </div>
