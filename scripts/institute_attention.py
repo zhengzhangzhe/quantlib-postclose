@@ -43,25 +43,36 @@ def _day_of_week(date_str: str) -> str:
 # DATA LAYER
 # ═══════════════════════════════════════════════════════════
 
+def _fetch_page(page: int, begin: str, end: str, max_retries: int = 3) -> list[dict]:
+    """Fetch a single page of research reports with retry."""
+    params = {
+        "industryCode": "*", "pageSize": 50, "pageNo": page,
+        "beginTime": begin, "endTime": end,
+        "qType": 0, "code": "*",
+    }
+    last_error = None
+    for attempt in range(1, max_retries + 1):
+        try:
+            r = requests.get(API_URL, params=params, headers=HEADERS, timeout=60)
+            r.raise_for_status()
+            data = r.json()
+            return data.get("data") or []
+        except Exception as e:
+            last_error = e
+            if attempt < max_retries:
+                wait = 2 ** (attempt - 1)  # 1s, 2s, 4s
+                print(f"    [retry] 第{page}页第{attempt}次失败, {wait}s后重试: {e}")
+                time.sleep(wait)
+    print(f"    [warn] 第{page}页{max_retries}次均失败: {last_error}")
+    return []
+
+
 def fetch_reports(begin: str, end: str) -> list[dict]:
     """Fetch all research reports in date range (paginated)."""
     all_reports = []
     page = 1
     while True:
-        params = {
-            "industryCode": "*", "pageSize": 50, "pageNo": page,
-            "beginTime": begin, "endTime": end,
-            "qType": 0, "code": "*",
-        }
-        try:
-            r = requests.get(API_URL, params=params, headers=HEADERS, timeout=30)
-            r.raise_for_status()
-            data = r.json()
-        except Exception as e:
-            print(f"    [warn] API 第{page}页失败: {e}")
-            break
-
-        reports = data.get("data") or []
+        reports = _fetch_page(page, begin, end)
         if not reports:
             break
         all_reports.extend(reports)
