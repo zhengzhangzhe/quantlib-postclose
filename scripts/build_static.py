@@ -239,7 +239,7 @@ def build_site():
 <div class="date-list">{''.join(rows)}
 <div class="date-card" style="border-color:var(--green)">
     <div class="date">📌 大佬推荐</div>
-    <div class="stats"><a href="/quantlib-postclose/p/bigshot.html">画像报告</a> · <a href="/quantlib-postclose/p/screener.html">每周海选</a></div>
+    <div class="stats"><a href="/quantlib-postclose/p/bigshot.html">画像报告</a> · <a href="/quantlib-postclose/p/screener.html">每周海选</a> · <a href="/quantlib-postclose/p/sai.html">🔬 sai佬</a></div>
 </div>
 </div>
 <div class="footer">自动生成 · 仅供参考，不构成投资建议</div>
@@ -302,6 +302,17 @@ def build_site():
             html = wrap_page("大佬推荐追踪", body)
             with open(page_dir / "bigshot.html", "w") as f:
                 f.write(html)
+
+    # Build bigshot profile pages
+    prof_dir = OUTPUT / "bigshot_profiles"
+    if prof_dir.exists():
+        for md_file in sorted(prof_dir.glob("*.md")):
+            name = md_file.stem
+            body = md_to_html(md_file.read_text())
+            html = wrap_page(f"大佬画像 · {name}", body)
+            with open(page_dir / f"{name}.html", "w") as f:
+                f.write(html)
+            print(f"  Profile: {page_dir / f'{name}.html'}")
 
     print(f"Built {len(items)} dates → {DIST}/")
     print(f"Index: {DIST / 'index.html'}")
