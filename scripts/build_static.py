@@ -180,7 +180,7 @@ def build_site():
     DIST.mkdir(parents=True, exist_ok=True)
 
     items = {}
-    for sub in ['postclose', 'morning', 'institute_attention', 'consistency', 'bigshot_picks', 'bigshot_screener']:
+    for sub in ['postclose', 'morning', 'institute_attention', 'consistency', 'bigshot_screener']:
         subdir = OUTPUT / sub
         if not subdir.exists():
             continue
@@ -238,8 +238,10 @@ def build_site():
 <div class="header"><h1>📈 每日复盘 & 盘前简报</h1></div>
 <div class="date-list">{''.join(rows)}
 <div class="date-card" style="border-color:var(--green)">
-    <div class="date">📌 大佬推荐</div>
-    <div class="stats"><a href="/quantlib-postclose/p/bigshot.html">画像报告</a> · <a href="/quantlib-postclose/p/screener.html">每周海选</a> · <a href="/quantlib-postclose/p/sai.html">🔬 sai佬</a></div>
+    <div class="date">📌 大佬画像</div>
+    <div class="stats"><a href="/quantlib-postclose/p/sai.html">sai佬</a> · <a href="/quantlib-postclose/p/灰兔尾.html">兔佬</a> · <a href="/quantlib-postclose/p/文驹.html">文驹</a> · <a href="/quantlib-postclose/p/-阿狼-.html">狼大</a> · <a href="/quantlib-postclose/p/F佬.html">F佬</a> · <a href="/quantlib-postclose/p/喜帖街QAQ.html">喜帖街</a></div>
+	    <div class="stats" style="margin-top:4px"><a href="/quantlib-postclose/p/screener.html">📊 每周海选</a></div>
+	</div>
 </div>
 </div>
 <div class="footer">自动生成 · 仅供参考，不构成投资建议</div>
@@ -290,18 +292,7 @@ def build_site():
             with open(page_dir / "screener.html", "w") as f:
                 f.write(html)
 
-    # Build bigshot picks page (latest only)
-    bsp_dir = OUTPUT / "bigshot_picks"
-    if bsp_dir.exists():
-        latest = sorted(bsp_dir.glob("*.md"), reverse=True)
-        if latest:
-            md_text = latest[0].read_text()
-            body = md_to_html(md_text)
-            page_dir = DIST / "p"
-            page_dir.mkdir(parents=True, exist_ok=True)
-            html = wrap_page("大佬推荐追踪", body)
-            with open(page_dir / "bigshot.html", "w") as f:
-                f.write(html)
+
 
     # Build bigshot profile pages
     prof_dir = OUTPUT / "bigshot_profiles"
