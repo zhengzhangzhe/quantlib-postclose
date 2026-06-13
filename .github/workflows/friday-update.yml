@@ -31,21 +31,10 @@ jobs:
       - name: Setup NGA cookie
         run: echo "${{ secrets.NGA_COOKIE }}" > data/nga_cookie.txt
 
-      - name: Update bigshot profiles
+      - name: Incremental bigshot update
         env:
           ANTHROPIC_AUTH_TOKEN: ${{ secrets.ANTHROPIC_AUTH_TOKEN }}
-        run: |
-          set -e
-          echo "=== 更新6位大佬画像 ==="
-          python3 scripts/bigshot_scan.py --uid 21321600 --name=幸运阿sai
-          python3 scripts/bigshot_scan.py --uid 60916468 --name=灰兔尾
-          python3 scripts/bigshot_scan.py --uid 66278813 --name=文驹
-          python3 scripts/bigshot_scan.py --uid 150058 --name=-阿狼-
-          python3 scripts/bigshot_scan.py --uid 66662897 --name=fuelish
-          python3 scripts/bigshot_scan.py --uid 61233918 --name=喜帖街QAQ
-          # fuelish -> F佬
-          cp data/nga/bigshot_content/fuelish.json data/nga/bigshot_content/F佬.json
-          echo "画像更新完成"
+        run: python3 scripts/bigshot_incremental.py
 
       - name: LLM screener
         env:
