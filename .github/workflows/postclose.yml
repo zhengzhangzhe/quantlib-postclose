@@ -54,6 +54,7 @@ jobs:
 
       - name: Generate profiles report (daily)
         run: python3 scripts/generate_bigshot_profiles.py
+        continue-on-error: true
 
       - name: Run consistency check
         run: python3 scripts/consistency_check.py || echo "校验跳过(无简报数据)"
