@@ -72,7 +72,12 @@ def generate():
         L.append("### 🔍 选股逻辑")
         L.append(f"- 入场: {profile.get('entry_logic','')}")
         L.append(f"- 出场: {profile.get('exit_logic','')}")
-        L.append(f"- 领域: {', '.join(profile.get('sectors',[]))}")
+        sectors = profile.get('sectors', [])
+        sector_names = [
+            s['name'] if isinstance(s, dict) else s
+            for s in sectors
+        ]
+        L.append(f"- 领域: {', '.join(sector_names)}")
         L.append("")
 
         if own:
