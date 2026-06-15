@@ -59,7 +59,8 @@ def generate_pick(name: str, profile: dict, review: str, candidates: list) -> di
     cand_text = ""
     for c in candidates[:20]:
         reasons = " · ".join(c.get("reasons", [])[:3])
-        cand_text += f"- {c['name']}({c['code']}) {c['pct']:+.1f}% 换手{c.get('turnover',0):.1f}% {reasons}\n"
+        price = f" 现价{c['close']:.2f}" if c.get('close', 0) > 0 else ""
+        cand_text += f"- {c['name']}({c['code']}) {c['pct']:+.1f}%{price} 换手{c.get('turnover',0):.1f}% {reasons}\n"
     if not cand_text:
         cand_text = "（今日无海选候选）"
 
@@ -78,7 +79,8 @@ def generate_pick(name: str, profile: dict, review: str, candidates: list) -> di
 输出JSON:
 {{"picks": [
   {{"name":"股票简称","code":"6位代码","action":"买入/加仓/关注/减仓",
-    "confidence":"高/中/低","reason":"选股理由(40字内)","entry_condition":"入场条件(30字内)",
+    "confidence":"高/中/低","reason":"选股理由(40字内)",
+    "entry_timing":"入场时机: 明天什么条件/什么价位可以进, 必须包含具体价格或均线位(30字内)",
     "risk":"风险提示(20字内)"}}
 ],
  "bias":"整体偏多/偏空/中性",
@@ -89,6 +91,7 @@ def generate_pick(name: str, profile: dict, review: str, candidates: list) -> di
 - 严格按画像的交易体系和入场逻辑选股, 不符合画像风格的不选
 - 优先从海选候选池里选, 候选池没有合适的再从复盘数据里找
 - 每只票的理由要体现画像的选股逻辑, 不能是泛泛的"看好"
+- entry_timing必须写清楚: 明天什么条件触发才入场。候选池里有现价(收盘价)的, 基于现价说出具体入场价位。比如"回踩20日线约120元缩量"或"放量突破125元确认"或"现价132元附近开盘+2%内可追"。不能只写"等待回踩"这种没价位没条件的。
 - 只输出JSON"""
 
     user = f"""## 今日复盘摘要
@@ -123,12 +126,12 @@ def render_report(today: str, all_picks: dict) -> str:
         L.append(f"> {result.get('comment','')}")
         L.append(f"> 整体判断：{result.get('bias','')}")
         L.append("")
-        L.append("| # | 股票 | 代码 | 操作 | 信心 | 理由 | 入场条件 | 风险 |")
+        L.append("| # | 股票 | 代码 | 操作 | 信心 | 理由 | 入场时机 | 风险 |")
         L.append("|---|------|------|------|------|------|----------|------|")
         for i, p in enumerate(result.get("picks", [])[:5], 1):
             L.append(f"| {i} | {p['name']} | {p['code']} | {p.get('action','')} | "
                      f"{p.get('confidence','')} | {p.get('reason','')} | "
-                     f"{p.get('entry_condition','')} | {p.get('risk','')} |")
+                     f"{p.get('entry_timing','')} | {p.get('risk','')} |")
         L.append("")
         L.append("---")
         L.append("")

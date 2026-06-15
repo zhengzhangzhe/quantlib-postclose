@@ -41,8 +41,9 @@ def fetch_stocks():
         if "亿" in nf: net_flow = float(nf.replace("亿","")) * 1e8
         elif "万" in nf: net_flow = float(nf.replace("万","")) * 1e4
         else: net_flow = float(nf) if nf else 0
+        close = float(str(r["最新价"])) if r["最新价"] and str(r["最新价"]) != "nan" else 0
         stocks.append({"code":code,"name":name,"pct":pct,"turnover":turnover,
-                       "net_flow":net_flow,"float_mkt":mkt.get(code,1e15)})
+                       "net_flow":net_flow,"float_mkt":mkt.get(code,1e15),"close":close})
     return stocks
 
 
