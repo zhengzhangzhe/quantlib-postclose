@@ -243,6 +243,14 @@ def build_site():
             profile_links.append(f'<a href="/quantlib-postclose/p/{name}.html">{display}</a>')
     profiles_links = " · ".join(profile_links) if profile_links else "暂无"
 
+    # Only show verify link if there's real data (not placeholder)
+    verify_link = ""
+    verify_dir_check = OUTPUT / "verified"
+    if verify_dir_check.exists():
+        latest = sorted(verify_dir_check.glob("*.md"), reverse=True)
+        if latest and "暂无昨日" not in latest[0].read_text()[:200]:
+            verify_link = " · <a href=\"/quantlib-postclose/p/verified.html\">✅ 选股验证</a>"
+
     index_html = f"""<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -257,7 +265,7 @@ def build_site():
 <div class="date-card" style="border-color:var(--green)">
     <div class="date">📌 大佬画像</div>
     <div class="stats">{profiles_links}</div>
-	    <div class="stats" style="margin-top:4px"><a href="/quantlib-postclose/p/daily_picks.html">🎯 今日选股</a> · <a href="/quantlib-postclose/p/verified.html">✅ 选股验证</a></div>
+	    <div class="stats" style="margin-top:4px"><a href="/quantlib-postclose/p/daily_picks.html">🎯 今日选股</a>{verify_link}</div>
 	</div>
 </div>
 </div>

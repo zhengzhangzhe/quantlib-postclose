@@ -111,7 +111,16 @@ def main():
         # Write a placeholder so the website doesn't 404
         out_dir = PROJ / "output" / "verified"
         out_dir.mkdir(parents=True, exist_ok=True)
-        placeholder = f"# 选股验证 · {today.isoformat()}\n\n*暂无昨日选股数据，明日收盘后自动验证*\n"
+        placeholder = f"""# 选股验证 · {today.isoformat()}
+
+*暂无昨日选股数据 — 验证逻辑: 每日收盘后用今日股价对比昨日入场条件*
+
+> 示例: 昨天 sai佬 说 "中际旭创回踩20日线约1150元可介入"
+> 今天收盘后系统检查: 中际旭创最低价是否触及1150元?
+>   - 触及 → 接近目标📍 / 未触及 → 高于/低于目标X%
+
+首次验证将在下一个交易日收盘后自动生成。
+"""
         (out_dir / f"{today.isoformat()}.md").write_text(placeholder)
         print(f"无昨日选股数据，已生成占位页")
         return
