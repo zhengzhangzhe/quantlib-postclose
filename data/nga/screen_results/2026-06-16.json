@@ -127,8 +127,8 @@
       ],
       "sector": "元件",
       "score": 3,
-      "close": 0,
-      "turnover": 12.430461883544922
+      "close": 65.03,
+      "turnover": 12.43
     },
     {
       "name": "康强电子",
@@ -139,8 +139,8 @@
       ],
       "sector": "半导体",
       "score": 3,
-      "close": 0,
-      "turnover": 14.575719833374023
+      "close": 33.76,
+      "turnover": 23.55
     },
     {
       "name": "兴福电子",
@@ -151,8 +151,8 @@
       ],
       "sector": "电子化学",
       "score": 3,
-      "close": 0,
-      "turnover": 10.89539623260498
+      "close": 115.0,
+      "turnover": 13.56
     },
     {
       "name": "濮阳惠成",
@@ -163,8 +163,8 @@
       ],
       "sector": "电子化学",
       "score": 3,
-      "close": 0,
-      "turnover": 14.414939880371094
+      "close": 18.77,
+      "turnover": 17.38
     },
     {
       "name": "耐科装备",
@@ -175,8 +175,8 @@
       ],
       "sector": "半导体",
       "score": 3,
-      "close": 0,
-      "turnover": 4.973296165466309
+      "close": 62.0,
+      "turnover": 6.96
     },
     {
       "name": "雅克科技",
@@ -187,8 +187,8 @@
       ],
       "sector": "半导体",
       "score": 3,
-      "close": 0,
-      "turnover": 18.097957611083984
+      "close": 138.83,
+      "turnover": 12.77
     },
     {
       "name": "华特气体",
@@ -199,8 +199,8 @@
       ],
       "sector": "电子化学",
       "score": 3,
-      "close": 0,
-      "turnover": 13.791659355163574
+      "close": 183.93,
+      "turnover": 10.08
     },
     {
       "name": "阿石创",
@@ -211,8 +211,8 @@
       ],
       "sector": "半导体",
       "score": 3,
-      "close": 0,
-      "turnover": 30.973344802856445
+      "close": 76.1,
+      "turnover": 36.59
     },
     {
       "name": "和林微纳",
@@ -223,8 +223,8 @@
       ],
       "sector": "半导体",
       "score": 3,
-      "close": 0,
-      "turnover": 6.857852458953857
+      "close": 130.8,
+      "turnover": 5.58
     },
     {
       "name": "领先股份",
@@ -235,8 +235,8 @@
       ],
       "sector": "半导体",
       "score": 3,
-      "close": 0,
-      "turnover": 7.962718486785889
+      "close": 118.3,
+      "turnover": 5.31
     }
   ],
   "fl": [
@@ -342,8 +342,8 @@
       ],
       "sector": "元件",
       "score": 3,
-      "close": 0,
-      "turnover": 22.48080825805664
+      "close": 56.91,
+      "turnover": 22.48
     },
     {
       "name": "旭光电子",
@@ -354,8 +354,8 @@
       ],
       "sector": "其他电子",
       "score": 3,
-      "close": 0,
-      "turnover": 2.892652988433838
+      "close": 31.56,
+      "turnover": 2.89
     },
     {
       "name": "逸豪新材",
@@ -366,8 +366,8 @@
       ],
       "sector": "元件",
       "score": 3,
-      "close": 0,
-      "turnover": 3.9924163818359375
+      "close": 67.92,
+      "turnover": 3.99
     },
     {
       "name": "宝鼎科技",
@@ -378,8 +378,8 @@
       ],
       "sector": "元件",
       "score": 3,
-      "close": 0,
-      "turnover": 1.8126507997512817
+      "close": 64.48,
+      "turnover": 1.81
     },
     {
       "name": "铜峰电子",
@@ -390,8 +390,8 @@
       ],
       "sector": "元件",
       "score": 3,
-      "close": 0,
-      "turnover": 7.5565571784973145
+      "close": 10.68,
+      "turnover": 7.56
     },
     {
       "name": "振华科技",
@@ -402,8 +402,8 @@
       ],
       "sector": "军工电子",
       "score": 3,
-      "close": 0,
-      "turnover": 5.280543804168701
+      "close": 51.88,
+      "turnover": 5.28
     },
     {
       "name": "华正新材",
@@ -414,8 +414,8 @@
       ],
       "sector": "元件",
       "score": 3,
-      "close": 0,
-      "turnover": 3.9235408306121826
+      "close": 187.33,
+      "turnover": 3.92
     },
     {
       "name": "火炬电子",
@@ -426,8 +426,8 @@
       ],
       "sector": "军工电子",
       "score": 3,
-      "close": 0,
-      "turnover": 3.8188188076019287
+      "close": 63.97,
+      "turnover": 3.82
     },
     {
       "name": "宏达电子",
@@ -438,8 +438,8 @@
       ],
       "sector": "军工电子",
       "score": 3,
-      "close": 0,
-      "turnover": 11.990340232849121
+      "close": 72.41,
+      "turnover": 11.99
     },
     {
       "name": "崇达技术",
@@ -450,8 +450,8 @@
       ],
       "sector": "元件",
       "score": 3,
-      "close": 0,
-      "turnover": 8.62526798248291
+      "close": 18.87,
+      "turnover": 8.62
     },
     {
       "name": "鸿远电子",
@@ -462,8 +462,8 @@
       ],
       "sector": "军工电子",
       "score": 3,
-      "close": 0,
-      "turnover": 6.230802536010742
+      "close": 68.42,
+      "turnover": 6.23
     },
     {
       "name": "达利凯普",
@@ -474,8 +474,8 @@
       ],
       "sector": "元件",
       "score": 3,
-      "close": 0,
-      "turnover": 16.439502716064453
+      "close": 36.64,
+      "turnover": 16.44
     },
     {
       "name": "士兰微",
@@ -486,8 +486,8 @@
       ],
       "sector": "半导体",
       "score": 3,
-      "close": 0,
-      "turnover": 5.392437934875488
+      "close": 35.37,
+      "turnover": 5.39
     }
   ],
   "xjt": [
@@ -621,8 +621,8 @@
       ],
       "sector": "半导体",
       "score": 3,
-      "close": 0,
-      "turnover": 14.575719833374023
+      "close": 33.76,
+      "turnover": 23.55
     },
     {
       "name": "兴福电子",
@@ -633,8 +633,8 @@
       ],
       "sector": "电子化学",
       "score": 3,
-      "close": 0,
-      "turnover": 10.89539623260498
+      "close": 115.0,
+      "turnover": 13.56
     },
     {
       "name": "江丰电子",
@@ -645,8 +645,8 @@
       ],
       "sector": "半导体",
       "score": 3,
-      "close": 0,
-      "turnover": 9.768686294555664
+      "close": 293.6,
+      "turnover": 14.98
     },
     {
       "name": "濮阳惠成",
@@ -657,8 +657,8 @@
       ],
       "sector": "电子化学",
       "score": 3,
-      "close": 0,
-      "turnover": 14.414939880371094
+      "close": 18.77,
+      "turnover": 17.38
     },
     {
       "name": "耐科装备",
@@ -669,8 +669,8 @@
       ],
       "sector": "半导体",
       "score": 3,
-      "close": 0,
-      "turnover": 4.973296165466309
+      "close": 62.0,
+      "turnover": 6.96
     },
     {
       "name": "雅克科技",
@@ -681,8 +681,8 @@
       ],
       "sector": "半导体",
       "score": 3,
-      "close": 0,
-      "turnover": 18.097957611083984
+      "close": 138.83,
+      "turnover": 12.77
     },
     {
       "name": "华特气体",
@@ -693,8 +693,8 @@
       ],
       "sector": "电子化学",
       "score": 3,
-      "close": 0,
-      "turnover": 13.791659355163574
+      "close": 183.93,
+      "turnover": 10.08
     },
     {
       "name": "阿石创",
@@ -705,8 +705,8 @@
       ],
       "sector": "半导体",
       "score": 3,
-      "close": 0,
-      "turnover": 30.973344802856445
+      "close": 76.1,
+      "turnover": 36.59
     },
     {
       "name": "和林微纳",
@@ -717,8 +717,8 @@
       ],
       "sector": "半导体",
       "score": 3,
-      "close": 0,
-      "turnover": 6.857852458953857
+      "close": 130.8,
+      "turnover": 5.58
     },
     {
       "name": "领先股份",
@@ -729,8 +729,8 @@
       ],
       "sector": "半导体",
       "score": 3,
-      "close": 0,
-      "turnover": 7.962718486785889
+      "close": 118.3,
+      "turnover": 5.31
     },
     {
       "name": "百合花",
@@ -741,8 +741,8 @@
       ],
       "sector": "化学制品",
       "score": 3,
-      "close": 0,
-      "turnover": 5.18168830871582
+      "close": 44.15,
+      "turnover": 6.8
     },
     {
       "name": "山东玻纤",
@@ -753,8 +753,8 @@
       ],
       "sector": "玻璃玻纤",
       "score": 3,
-      "close": 0,
-      "turnover": 15.006477355957031
+      "close": 21.8,
+      "turnover": 12.94
     },
     {
       "name": "杭氧股份",
@@ -765,8 +765,8 @@
       ],
       "sector": "化学制品",
       "score": 3,
-      "close": 0,
-      "turnover": 3.1327452659606934
+      "close": 26.35,
+      "turnover": 2.69
     },
     {
       "name": "康达新材",
@@ -777,8 +777,8 @@
       ],
       "sector": "化学制品",
       "score": 3,
-      "close": 0,
-      "turnover": 25.618865966796875
+      "close": 16.28,
+      "turnover": 18.52
     }
   ],
   "wj": [
@@ -899,8 +899,8 @@
       ],
       "sector": "电池",
       "score": 3,
-      "close": 0,
-      "turnover": 4.02850341796875
+      "close": 14.23,
+      "turnover": 4.03
     },
     {
       "name": "风华高科",
@@ -911,8 +911,8 @@
       ],
       "sector": "元件",
       "score": 3,
-      "close": 0,
-      "turnover": 12.430461883544922
+      "close": 65.03,
+      "turnover": 12.43
     },
     {
       "name": "铜冠铜箔",
@@ -923,8 +923,8 @@
       ],
       "sector": "电池",
       "score": 3,
-      "close": 0,
-      "turnover": 4.98057746887207
+      "close": 170.16,
+      "turnover": 4.98
     },
     {
       "name": "雄韬股份",
@@ -935,8 +935,8 @@
       ],
       "sector": "电池",
       "score": 3,
-      "close": 0,
-      "turnover": 4.8968939781188965
+      "close": 37.73,
+      "turnover": 15.41
     },
     {
       "name": "恩捷股份",
@@ -947,8 +947,8 @@
       ],
       "sector": "电池",
       "score": 3,
-      "close": 0,
-      "turnover": 5.773773670196533
+      "close": 67.92,
+      "turnover": 5.8
     },
     {
       "name": "湘潭电化",
@@ -959,8 +959,8 @@
       ],
       "sector": "电池",
       "score": 3,
-      "close": 0,
-      "turnover": 14.188159942626953
+      "close": 19.1,
+      "turnover": 14.01
     },
     {
       "name": "浙江恒威",
@@ -971,8 +971,8 @@
       ],
       "sector": "电池",
       "score": 3,
-      "close": 0,
-      "turnover": 3.99869704246521
+      "close": 33.23,
+      "turnover": 4.87
     }
   ],
   "mao": [
@@ -1091,8 +1091,8 @@
       ],
       "sector": "元件",
       "score": 6,
-      "close": 0,
-      "turnover": 22.48080825805664
+      "close": 56.91,
+      "turnover": 22.48
     },
     {
       "name": "旭光电子",
@@ -1103,8 +1103,8 @@
       ],
       "sector": "其他电子",
       "score": 6,
-      "close": 0,
-      "turnover": 2.892652988433838
+      "close": 31.56,
+      "turnover": 2.89
     },
     {
       "name": "逸豪新材",
@@ -1115,8 +1115,8 @@
       ],
       "sector": "元件",
       "score": 6,
-      "close": 0,
-      "turnover": 3.9924163818359375
+      "close": 67.92,
+      "turnover": 3.99
     },
     {
       "name": "宝鼎科技",
@@ -1127,8 +1127,8 @@
       ],
       "sector": "元件",
       "score": 6,
-      "close": 0,
-      "turnover": 1.8126507997512817
+      "close": 64.48,
+      "turnover": 1.81
     },
     {
       "name": "铜峰电子",
@@ -1139,8 +1139,8 @@
       ],
       "sector": "元件",
       "score": 6,
-      "close": 0,
-      "turnover": 7.5565571784973145
+      "close": 10.68,
+      "turnover": 7.56
     },
     {
       "name": "振华科技",
@@ -1151,8 +1151,8 @@
       ],
       "sector": "军工电子",
       "score": 6,
-      "close": 0,
-      "turnover": 5.280543804168701
+      "close": 51.88,
+      "turnover": 5.28
     },
     {
       "name": "华正新材",
@@ -1163,8 +1163,8 @@
       ],
       "sector": "元件",
       "score": 6,
-      "close": 0,
-      "turnover": 3.9235408306121826
+      "close": 187.33,
+      "turnover": 3.92
     },
     {
       "name": "火炬电子",
@@ -1175,8 +1175,8 @@
       ],
       "sector": "军工电子",
       "score": 6,
-      "close": 0,
-      "turnover": 3.8188188076019287
+      "close": 63.97,
+      "turnover": 3.82
     },
     {
       "name": "宏达电子",
@@ -1187,8 +1187,8 @@
       ],
       "sector": "军工电子",
       "score": 6,
-      "close": 0,
-      "turnover": 11.990340232849121
+      "close": 72.41,
+      "turnover": 11.99
     },
     {
       "name": "崇达技术",
@@ -1199,8 +1199,8 @@
       ],
       "sector": "元件",
       "score": 6,
-      "close": 0,
-      "turnover": 8.62526798248291
+      "close": 18.87,
+      "turnover": 8.62
     },
     {
       "name": "鸿远电子",
@@ -1211,8 +1211,8 @@
       ],
       "sector": "军工电子",
       "score": 6,
-      "close": 0,
-      "turnover": 6.230802536010742
+      "close": 68.42,
+      "turnover": 6.23
     },
     {
       "name": "达利凯普",
@@ -1223,8 +1223,8 @@
       ],
       "sector": "元件",
       "score": 6,
-      "close": 0,
-      "turnover": 16.439502716064453
+      "close": 36.64,
+      "turnover": 16.44
     }
   ]
 }

@@ -85,18 +85,22 @@ def load_postclose_stocks(days=5):
     return list(stocks.values())
 
 
-def enrich_with_postclose(profile_name, candidates, postclose_stocks):
+def enrich_with_postclose(profile_name, candidates, postclose_stocks, all_stocks_lookup=None):
     """Add postclose stocks that match the bigshot's profile but weren't caught by rules."""
     prof_file = PROJ / "data" / "nga" / "bigshot_profiles" / f"{profile_name}.json"
     if not prof_file.exists():
         return candidates
     profile = json.loads(prof_file.read_text())
 
+    # Build close price lookup from fresh market data
+    close_lookup = {}
+    if all_stocks_lookup:
+        close_lookup = all_stocks_lookup
+
     # Build keyword list from sectors + stock_preferences
     keywords = set()
     for s in profile.get("sectors", []):
         name = s["name"] if isinstance(s, dict) else s
-        # Extract key terms from sector name
         for part in name.replace("/", " ").replace("（", " ").replace("）", " ").split():
             if len(part) >= 2:
                 keywords.add(part)
@@ -109,6 +113,10 @@ def enrich_with_postclose(profile_name, candidates, postclose_stocks):
     for ps in postclose_stocks:
         if ps["code"] in seen_codes:
             continue
+        # Fill in close price from fresh market data
+        if ps.get("close", 0) == 0 and ps["code"] in close_lookup:
+            ps["close"] = close_lookup[ps["code"]].get("close", 0)
+            ps["turnover"] = close_lookup[ps["code"]].get("turnover", ps.get("turnover", 0))
         score = 0
         matched = []
         for kw in keywords:
@@ -143,7 +151,8 @@ def main():
     for name, fn in sorted(rules.items()):
         display = SCREEN_KEYS.get(name, name)
         results = fn(stocks)
-        results = enrich_with_postclose(name, results, postclose_stocks)
+        stocks_lookup = {s["code"]: s for s in stocks}
+        results = enrich_with_postclose(name, results, postclose_stocks, stocks_lookup)
         print(f"=== {display}: {len(results)} 只 ===")
         for i, c in enumerate(results[:8], 1):
             mkt_str = f" {c['float_mkt']/1e8:.0f}亿" if c.get('float_mkt',0) < 1e14 else ""
