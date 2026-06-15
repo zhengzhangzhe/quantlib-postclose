@@ -154,7 +154,8 @@ def main():
         def pack(cands, n=20):
             return [{"name":c["name"],"code":c["code"],"pct":c["pct"],
                      "reasons":c.get("reasons",[]),"sector":c.get("sector",""),
-                     "score":c.get("score",0)} for c in cands[:n]]
+                     "score":c.get("score",0),"close":c.get("close",0),
+                     "turnover":c.get("turnover",0)} for c in cands[:n]]
 
         all_results[SCREEN_SAVE_KEYS.get(name, name)] = pack(results)
 
