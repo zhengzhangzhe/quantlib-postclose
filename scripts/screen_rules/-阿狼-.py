@@ -1,48 +1,45 @@
 def screen(stocks):
-    """狼大 - 科技主线+机构行为+大盘择时"""
     candidates = []
     for s in stocks:
         score = 0
         reasons = []
-        name = s.get('name', '')
-        pct = s.get('pct', 0)
-        turnover = s.get('turnover', 0)
-        net_flow = s.get('net_flow', 0)
-        float_mkt = s.get('float_mkt', 0)
+        name = s["name"]
+        pct = s["pct"]
+        turnover = s["turnover"]
+        net_flow = s["net_flow"]
+        float_mkt = s["float_mkt"]
         
         # 标的匹配
-        core_stocks = ['鼎龙股份', '江丰电子', '中船特气']
-        watch_stocks = ['沪硅产业', '沪电股份', '中际旭创', '新易盛', '长飞光纤', '神工股份', '风华高科']
-        if name in core_stocks:
-            score += 30
-            reasons.append('核心标的')
-        elif name in watch_stocks:
+        core = ["鼎龙股份", "江丰电子", "中船特气"]
+        watch = ["沪硅产业", "沪电股份", "中际旭创", "新易盛", "长飞光纤", "神工股份", "风华高科"]
+        if name in core:
+            score += 25
+            reasons.append("核心标的")
+        elif name in watch:
             score += 15
-            reasons.append('关注标的')
-        else:
-            continue
+            reasons.append("关注标的")
         
-        # 入场条件：带量突破后缩量回踩不破，关键支撑位企稳
-        # 模拟：pct在-3到3之间，换手率适中，净流入为正
-        if -3 <= pct <= 3 and turnover < 10 and net_flow > 0:
-            score += 20
-            reasons.append('缩量企稳，资金流入')
-        elif pct > 3 and turnover > 5 and net_flow > 0:
-            score += 15
-            reasons.append('带量突破')
-        else:
-            continue
+        # 行业扩展
+        sectors_keywords = {
+            "半导体材料": ["鼎龙", "江丰", "中船特气", "沪硅", "神工", "华特气体", "雅克科技", "晶瑞电材", "南大光电", "彤程新材", "上海新阳", "安集科技", "金宏气体", "昊华科技", "巨化股份"],
+            "光模块/CPO": ["中际旭创", "新易盛", "天孚通信", "光迅科技", "华工科技", "博创科技", "太辰光", "德科立", "联特科技", "剑桥科技", "铭普光磁", "光库科技"],
+            "PCB": ["沪电股份", "深南电路", "鹏鼎控股", "东山精密", "景旺电子", "胜宏科技", "方正科技", "生益科技", "华正新材", "超声电子", "兴森科技", "中京电子"],
+            "光纤光缆": ["长飞光纤", "亨通光电", "中天科技", "烽火通信", "通鼎互联", "永鼎股份", "富通信息", "特发信息"]
+        }
+        for sector, keywords in sectors_keywords.items():
+            for kw in keywords:
+                if kw in name:
+                    score += 8
+                    reasons.append(f"{sector}板块")
+                    break
         
-        # 风控过滤：不追高，散户扎堆回避
-        if pct > 8:
-            continue
-        if turnover > 30:
-            continue
+        # 入场条件：低吸风格
+        if -3 <= pct <= 3 and turnover < 8:
+            score += 10
+            reasons.append("低吸条件满足")
         
-        # 市值偏好：流通市值适中
-        if float_mkt < 1e9 or float_mkt > 1e12:
-            continue
+        # 风控过滤：无特殊
         
-        if score >= 30:
-            candidates.append({**s, 'score': score, 'reasons': reasons})
-    return sorted(candidates, key=lambda x: -x['score'])[:20]
+        if score >= 20:
+            candidates.append({**s, "score": score, "reasons": reasons})
+    return sorted(candidates, key=lambda x: -x["score"])[:20]

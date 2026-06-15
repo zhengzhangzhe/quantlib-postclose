@@ -1,48 +1,52 @@
 def screen(stocks):
-    """猫指导 - 情绪周期+机构趋势"""
     candidates = []
     for s in stocks:
         score = 0
         reasons = []
-        name = s.get('name', '')
-        pct = s.get('pct', 0)
-        turnover = s.get('turnover', 0)
-        net_flow = s.get('net_flow', 0)
-        float_mkt = s.get('float_mkt', 0)
+        name = s["name"]
+        pct = s["pct"]
+        turnover = s["turnover"]
+        net_flow = s["net_flow"]
+        float_mkt = s["float_mkt"]
         
         # 标的匹配
-        core_stocks = ['长川科技', '润泽科技', '寒武纪', '美的集团']
-        satellite_stocks = ['卫星化学', '信维通信', '利通电子', '中科曙光']
-        watch_stocks = ['恒瑞医药', '药明康德', '沪硅产业', '中芯国际']
-        if name in core_stocks:
-            score += 30
-            reasons.append('核心标的')
-        elif name in satellite_stocks:
-            score += 20
-            reasons.append('卫星标的')
-        elif name in watch_stocks:
-            score += 10
-            reasons.append('关注标的')
-        else:
-            continue
-        
-        # 入场条件：短线分歧回踩均线，机构票放量站上60日线，低吸模式
-        # 模拟：pct在-3到3之间，换手率适中，净流入为正
-        if -3 <= pct <= 3 and turnover < 10 and net_flow > 0:
+        core = ["长川科技", "润泽科技", "寒武纪", "美的集团"]
+        satellite = ["卫星化学", "信维通信", "利通电子", "中科曙光"]
+        watch = ["恒瑞医药", "药明康德", "沪硅产业", "中芯国际"]
+        if name in core:
             score += 25
-            reasons.append('回踩企稳，资金流入')
-        elif pct > 3 and turnover > 5 and net_flow > 0:
-            score += 20
-            reasons.append('放量突破')
-        else:
-            continue
+            reasons.append("核心标的")
+        elif name in satellite:
+            score += 15
+            reasons.append("卫星标的")
+        elif name in watch:
+            score += 8
+            reasons.append("观察标的")
         
-        # 风控过滤：不追高，短线试错仓位小
-        if pct > 8:
-            continue
-        if turnover > 30:
-            continue
+        # 行业扩展
+        sectors_keywords = {
+            "半导体（存储/设备/材料）": ["长川科技", "寒武纪", "沪硅产业", "中芯国际", "北方华创", "中微公司", "拓荆科技", "兆易创新", "澜起科技", "北京君正", "佰维存储", "江波龙", "德明利", "长鑫存储", "紫光国微"],
+            "数据中心/AIDC": ["润泽科技", "中科曙光", "浪潮信息", "紫光股份", "中兴通讯", "烽火通信", "星网锐捷", "锐捷网络", "菲菱科思", "共进股份", "奥飞数据", "光环新网", "宝信软件", "数据港"],
+            "航天/商业航天": ["航天电子", "中国卫星", "航天发展", "航天电器", "航天科技", "航天晨光", "航天长峰", "航天动力", "航天机电", "航天彩虹", "航天宏图", "航天环宇"],
+            "创新药": ["恒瑞医药", "药明康德", "百济神州", "信达生物", "君实生物", "康龙化成", "泰格医药", "凯莱英", "昭衍新药", "药石科技", "美迪西", "博腾股份"],
+            "化工": ["卫星化学", "万华化学", "华鲁恒升", "扬农化工", "龙佰集团", "中泰化学", "兴发集团", "合盛硅业", "新安股份", "鲁西化工", "巨化股份", "三美股份"],
+            "消费（家电/白酒）": ["美的集团", "格力电器", "海尔智家", "贵州茅台", "五粮液", "泸州老窖", "山西汾酒", "洋河股份", "古井贡酒", "今世缘", "青岛啤酒", "伊利股份"],
+            "贵金属": ["紫金矿业", "山东黄金", "中金黄金", "赤峰黄金", "湖南黄金", "银泰黄金", "恒邦股份", "西部黄金", "中润资源", "盛达资源"]
+        }
+        for sector, keywords in sectors_keywords.items():
+            for kw in keywords:
+                if kw in name:
+                    score += 8
+                    reasons.append(f"{sector}板块")
+                    break
         
-        if score >= 30:
-            candidates.append({**s, 'score': score, 'reasons': reasons})
-    return sorted(candidates, key=lambda x: -x['score'])[:20]
+        # 入场条件：趋势跟随
+        if -1 <= pct <= 5 and 3 <= turnover <= 15:
+            score += 10
+            reasons.append("趋势跟随条件满足")
+        
+        # 风控过滤
+        
+        if score >= 20:
+            candidates.append({**s, "score": score, "reasons": reasons})
+    return sorted(candidates, key=lambda x: -x["score"])[:20]
