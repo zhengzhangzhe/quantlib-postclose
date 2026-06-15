@@ -226,6 +226,23 @@ def build_site():
 <div class="stats">{' · '.join(links)}</div>
 </div>""")
 
+    # Dynamically build profile links from output/bigshot_profiles/
+    prof_dir = OUTPUT / "bigshot_profiles"
+    profile_links = []
+    if prof_dir.exists():
+        import json
+        for md_file in sorted(prof_dir.glob("*.md")):
+            name = md_file.stem
+            display = name
+            prof_json = PROJ / "data" / "nga" / "bigshot_profiles" / f"{name}.json"
+            if prof_json.exists():
+                try:
+                    d = json.loads(prof_json.read_text())
+                    display = d.get("display", name)
+                except: pass
+            profile_links.append(f'<a href="/quantlib-postclose/p/{name}.html">{display}</a>')
+    profiles_links = " · ".join(profile_links) if profile_links else "暂无"
+
     index_html = f"""<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -239,7 +256,7 @@ def build_site():
 <div class="date-list">{''.join(rows)}
 <div class="date-card" style="border-color:var(--green)">
     <div class="date">📌 大佬画像</div>
-    <div class="stats"><a href="/quantlib-postclose/p/幸运阿sai.html">sai佬</a> · <a href="/quantlib-postclose/p/灰兔尾.html">兔佬</a> · <a href="/quantlib-postclose/p/文驹.html">文驹</a> · <a href="/quantlib-postclose/p/-阿狼-.html">狼大</a> · <a href="/quantlib-postclose/p/F佬.html">F佬</a> · <a href="/quantlib-postclose/p/喜帖街QAQ.html">喜帖街</a></div>
+    <div class="stats">{profiles_links}</div>
 	    <div class="stats" style="margin-top:4px"><a href="/quantlib-postclose/p/screener.html">📊 每周海选</a></div>
 	</div>
 </div>
