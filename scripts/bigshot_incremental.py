@@ -92,9 +92,10 @@ def main():
 
             new_posts = []
 
-            # === A. 主题帖 OP ===
+            # === A. 主题帖 OP（按时间增量：authorid页最新在前，2页无新即停） ===
             topics = []
-            for pg_num in range(1, 10):
+            zero_new_streak = 0
+            for pg_num in range(1, 100):
                 url = f"https://bbs.nga.cn/thread.php?authorid={uid}"
                 if pg_num > 1:
                     url += f"&page={pg_num}"
@@ -103,7 +104,7 @@ def main():
                     page.wait_for_timeout(600)
                 except:
                     break
-                found = 0
+                page_new = 0
                 for a in page.query_selector_all("a.topic"):
                     href = a.get_attribute("href") or ""
                     m = re.search(r"tid=(\d+)", href)
@@ -111,8 +112,14 @@ def main():
                         tid = m.group(1)
                         if not any(k[0] == tid for k in old_posts):
                             topics.append({"tid": tid, "title": a.inner_text().strip()})
-                        found += 1
-                if found == 0:
+                            page_new += 1
+                if page_new == 0:
+                    zero_new_streak += 1
+                    if zero_new_streak >= 2:
+                        break
+                else:
+                    zero_new_streak = 0
+                if not page.query_selector_all("a.topic"):
                     break
                 time.sleep(0.3)
 
@@ -145,7 +152,6 @@ def main():
 
             # === B. searchpost 回复（时间驱动） ===
             sp_new = 0
-            sp_old = 0
             for pg_num in range(1, 100):
                 url = f"https://bbs.nga.cn/thread.php?searchpost=1&authorid={uid}"
                 if pg_num > 1:
@@ -160,13 +166,22 @@ def main():
                 post_els = page.query_selector_all(".postcontent")
                 date_els = page.query_selector_all(".postdate")
 
-                page_old = 0  # 本页旧帖数
+                # 先看本页最后一条的时间，超过7天则整页及之后全是旧帖 → 停
+                if date_els and topic_els:
+                    last_i = min(len(date_els), len(topic_els)) - 1
+                    last_date = parse_postdate(date_els[last_i].inner_text().strip(), today)
+                    if last_date and last_date < cutoff:
+                        print(f"  searchpost p{pg_num}: 最后一条 {last_date} 已超7天, 停止")
+                        break
+
                 found = 0
                 for i in range(min(len(topic_els), len(post_els))):
-                    # Check date
                     post_date = None
                     if i < len(date_els):
                         post_date = parse_postdate(date_els[i].inner_text().strip(), today)
+                    # 超过7天的跳过
+                    if post_date and post_date < cutoff:
+                        continue
 
                     href = topic_els[i].get_attribute("href") or ""
                     m = re.search(r"tid=(\d+)", href)
@@ -178,12 +193,6 @@ def main():
 
                     key = (m.group(1), text[:100])
                     if key in old_posts:
-                        page_old += 1
-                        continue
-
-                    # 新帖 → 检查时间
-                    if post_date and post_date < cutoff:
-                        # 超过7天，且是旧帖，跳过
                         continue
 
                     new_posts.append({
@@ -195,14 +204,9 @@ def main():
                     found += 1
 
                 sp_new += found
-                sp_old += page_old
 
                 if pg_num % 5 == 1 or found > 0:
-                    print(f"  searchpost p{pg_num}: +{found}新, {page_old}旧")
-
-                # 停止条件：本页全部旧帖 且 最新一条也超过7天
-                if found == 0 and page_old > 0:
-                    break
+                    print(f"  searchpost p{pg_num}: +{found}新")
 
                 time.sleep(0.5)
 
