@@ -36,6 +36,13 @@ jobs:
           ANTHROPIC_AUTH_TOKEN: ${{ secrets.ANTHROPIC_AUTH_TOKEN }}
         run: python3 scripts/bigshot_incremental.py
 
+      - name: Bigshot stock picks (incremental)
+        run: python3 scripts/nga_bigshot_stocks.py --incremental --save
+
+      - name: Generate profiles report
+        run: python3 scripts/generate_bigshot_profiles.py
+        continue-on-error: true
+
       - name: LLM screener
         env:
           ANTHROPIC_AUTH_TOKEN: ${{ secrets.ANTHROPIC_AUTH_TOKEN }}
@@ -60,7 +67,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git remote set-url origin "https://${GH_TOKEN}@github.com/${{ github.repository }}.git"
-          git add data/nga/bigshot_content/ data/nga/bigshot_profiles/ output/bigshot_profiles/ output/bigshot_screener/ data/nga/screen_results/
+          git add data/nga/bigshot_content/ data/nga/bigshot_profiles/ output/bigshot_profiles/ output/bigshot_screener/ data/nga/screen_results/ data/nga/last_scan.json output/bigshot_picks/
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else

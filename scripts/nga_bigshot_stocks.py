@@ -12,6 +12,7 @@ import argparse
 import json
 import re
 import sys
+import time as _time
 from collections import Counter, defaultdict
 from datetime import datetime, date, timedelta
 from pathlib import Path
@@ -164,6 +165,34 @@ def extract_methods(text: str) -> list[str]:
     return methods
 
 
+def parse_postdate(text: str, today: date) -> date | None:
+    """Parse NGA .postdate format: 'MM-DD HH:MM' → date."""
+    m = re.match(r"(\d{2})-(\d{2})\s", text.strip())
+    if not m:
+        return None
+    mm, dd = int(m.group(1)), int(m.group(2))
+    d = date(today.year, mm, dd)
+    if d > today:
+        d = date(today.year - 1, mm, dd)
+    return d
+
+
+def load_checkpoint() -> date | None:
+    """Load last scan date from checkpoint file."""
+    cp_file = PROJ / "data" / "nga" / "last_scan.json"
+    if cp_file.exists():
+        data = json.loads(cp_file.read_text())
+        return date.fromisoformat(data.get("last_scan", ""))
+    return None
+
+
+def save_checkpoint(scan_date: date):
+    """Save scan date to checkpoint file."""
+    cp_file = PROJ / "data" / "nga" / "last_scan.json"
+    cp_file.parent.mkdir(parents=True, exist_ok=True)
+    cp_file.write_text(json.dumps({"last_scan": scan_date.isoformat()}, indent=2))
+
+
 def load_postclose_snapshots() -> dict:
     """Load all available postclose snapshots for cross-validation."""
     snap_dir = PROJ / "data" / "postclose"
@@ -202,6 +231,8 @@ def main():
     parser = argparse.ArgumentParser(description="NGA 大佬股票追踪")
     parser.add_argument("--forum-pages", type=int, default=5)
     parser.add_argument("--tail-pages", type=int, default=20)
+    parser.add_argument("--incremental", action="store_true",
+                        help="Incremental: scan from last page backwards, stop when hitting old posts")
     parser.add_argument("--json", action="store_true")
     parser.add_argument("--save", action="store_true")
     args = parser.parse_args()
@@ -240,7 +271,13 @@ def main():
         print(f"目标 {len(tids)} 个帖子 (大佬主帖)")
 
         # Scan threads — collect大佬's own posts
-        author_idx = {}  # post index → author name mapping
+        checkpoint = load_checkpoint() if args.incremental else None
+        today = date.today()
+        if checkpoint:
+            print(f"增量模式: 上次扫描 {checkpoint}, 仅扫描此后的帖子")
+        else:
+            print("全量模式" + (" (首次增量→初始化末5页)" if args.incremental else ""))
+
         for i, (tid, title) in enumerate(tids):
             try:
                 page.goto(f"https://bbs.nga.cn/read.php?tid={tid}",
@@ -255,56 +292,119 @@ def main():
                 for pg_m in re.finditer(r'page=(\d+)', href):
                     max_pg = max(max_pg, int(pg_m.group(1)))
 
-            pages = {1, 2, 3, 4, 5}
-            for offset in range(args.tail_pages):
-                pg = min(max_pg - offset, 300)
-                if pg > 5: pages.add(pg)
-            if max_pg > 100:
-                mid = max_pg // 2
-                for offset in range(10):
-                    pg = min(mid + offset, 300)
-                    if pg > 5 and pg < max_pg: pages.add(pg)
-
-            for pg in sorted(pages):
-                try:
-                    url = f"https://bbs.nga.cn/read.php?tid={tid}"
-                    if pg > 1: url += f"&page={pg}"
-                    page.goto(url, timeout=8000, wait_until="domcontentloaded")
-                    page.wait_for_timeout(300)
-                except: continue
-
-                # Collect authors and their posts
-                author_els = page.query_selector_all("[id^=postauthor]")
-                authors = [el.inner_text().strip() for el in author_els]
-                post_els = page.query_selector_all(".postcontent")
-
-                for j, (author, post_el) in enumerate(zip(authors, post_els)):
-                    if author not in BIGSHOTS:
+            if args.incremental:
+                # ── Incremental mode: scan from last page backwards ──
+                MAX_INCR_PAGES = 5
+                pg = max(max_pg, 1)
+                scanned = 0
+                stop_thread = False
+                while pg >= 1 and scanned < MAX_INCR_PAGES and not stop_thread:
+                    try:
+                        url = f"https://bbs.nga.cn/read.php?tid={tid}"
+                        if pg > 1: url += f"&page={pg}"
+                        page.goto(url, timeout=8000, wait_until="domcontentloaded")
+                        page.wait_for_timeout(300)
+                    except:
+                        pg -= 1
                         continue
-                    text = post_el.inner_text()
-                    all_posts[author].append({
-                        "text": text,
-                        "tid": tid,
-                        "title": title,
-                        "page": pg,
-                        "post_idx": j,
-                    })
 
-                    # Extract stock picks
-                    stocks = extract_stocks(text, stock_map)
-                    for code, name, match_text in stocks:
-                        direction = classify_direction(text)
-                        if direction in ("buy", "watch"):
-                            all_picks.append({
-                                "username": author,
-                                "code": code,
-                                "name": name or code,
-                                "direction": direction,
-                                "text": text[:200],
-                                "tid": tid,
-                                "title": title,
-                                "page": pg,
-                            })
+                    scanned += 1
+                    author_els = page.query_selector_all("[id^=postauthor]")
+                    authors = [el.inner_text().strip() for el in author_els]
+                    post_els = page.query_selector_all(".postcontent")
+                    date_els = page.query_selector_all(".postdate")
+
+                    # Determine if this page has any new posts
+                    newest_tracked_date = None
+                    for j, (author, post_el) in enumerate(zip(authors, post_els)):
+                        if author not in BIGSHOTS:
+                            continue
+                        post_date = None
+                        if j < len(date_els):
+                            post_date = parse_postdate(date_els[j].inner_text().strip(), today)
+                        if post_date:
+                            if newest_tracked_date is None or post_date > newest_tracked_date:
+                                newest_tracked_date = post_date
+
+                    # Stop if all tracked posts on this page are older than checkpoint
+                    if newest_tracked_date and checkpoint and newest_tracked_date < checkpoint:
+                        stop_thread = True
+                        break
+
+                    # Process this page
+                    for j, (author, post_el) in enumerate(zip(authors, post_els)):
+                        if author not in BIGSHOTS:
+                            continue
+                        # In incremental mode, skip posts older than checkpoint
+                        if checkpoint and j < len(date_els):
+                            post_date = parse_postdate(date_els[j].inner_text().strip(), today)
+                            if post_date and post_date < checkpoint:
+                                continue
+                        text = post_el.inner_text()
+                        all_posts[author].append({
+                            "text": text, "tid": tid, "title": title,
+                            "page": pg, "post_idx": j,
+                        })
+                        stocks = extract_stocks(text, stock_map)
+                        for code, name, match_text in stocks:
+                            direction = classify_direction(text)
+                            if direction in ("buy", "watch"):
+                                all_picks.append({
+                                    "username": author, "code": code,
+                                    "name": name or code, "direction": direction,
+                                    "text": text[:200], "tid": tid,
+                                    "title": title, "page": pg,
+                                })
+
+                    pg -= 1
+                    _time.sleep(0.3)
+
+                if scanned > 0:
+                    print(f"  {title}: 扫 {scanned} 页 (末页{max_pg})" +
+                          (" [已追上]" if stop_thread else ""))
+
+            else:
+                # ── Full mode: orig page selection logic ──
+                pages = {1, 2, 3, 4, 5}
+                for offset in range(args.tail_pages):
+                    pg = min(max_pg - offset, 300)
+                    if pg > 5: pages.add(pg)
+                if max_pg > 100:
+                    mid = max_pg // 2
+                    for offset in range(10):
+                        pg = min(mid + offset, 300)
+                        if pg > 5 and pg < max_pg: pages.add(pg)
+
+                for pg in sorted(pages):
+                    try:
+                        url = f"https://bbs.nga.cn/read.php?tid={tid}"
+                        if pg > 1: url += f"&page={pg}"
+                        page.goto(url, timeout=8000, wait_until="domcontentloaded")
+                        page.wait_for_timeout(300)
+                    except: continue
+
+                    author_els = page.query_selector_all("[id^=postauthor]")
+                    authors = [el.inner_text().strip() for el in author_els]
+                    post_els = page.query_selector_all(".postcontent")
+
+                    for j, (author, post_el) in enumerate(zip(authors, post_els)):
+                        if author not in BIGSHOTS:
+                            continue
+                        text = post_el.inner_text()
+                        all_posts[author].append({
+                            "text": text, "tid": tid, "title": title,
+                            "page": pg, "post_idx": j,
+                        })
+                        stocks = extract_stocks(text, stock_map)
+                        for code, name, match_text in stocks:
+                            direction = classify_direction(text)
+                            if direction in ("buy", "watch"):
+                                all_picks.append({
+                                    "username": author, "code": code,
+                                    "name": name or code, "direction": direction,
+                                    "text": text[:200], "tid": tid,
+                                    "title": title, "page": pg,
+                                })
 
             if (i + 1) % 20 == 0:
                 total_posts = sum(len(v) for v in all_posts.values())
@@ -312,6 +412,11 @@ def main():
                 print(f"  {i+1}/{len(tids)}, {total_posts} posts, {total_picks} picks")
 
         browser.close()
+
+    # Save checkpoint for incremental mode
+    if args.incremental:
+        save_checkpoint(today)
+        print(f"检查点已更新: {today}")
 
     if not all_posts:
         print("未找到大佬发言"); return
