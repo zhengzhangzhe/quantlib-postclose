@@ -25,7 +25,7 @@ STOCK_KWS = [
 def collect_own_picks():
     """Extract stocks each大佬 mentioned in their posts."""
     result = {}
-    for user in ["ddddd519","-阿狼-","灰兔尾","文驹","达达鸭儿呀","幸运阿sai"]:
+    for user in ["-阿狼-","灰兔尾","文驹","幸运阿sai","F佬","喜帖街QAQ"]:
         pf = PROJ / "data" / "nga" / "bigshot_content" / f"{user}.json"
         if not pf.exists():
             result[user] = set()
@@ -62,12 +62,12 @@ def generate():
 
     # Screen key → (user, label, style)
     SCREEN_MAP = [
-        ("d", "ddddd519", "d佬", "超短连板"),
         ("wj", "文驹", "文驹", "钨/有色/PCB"),
         ("tl", "灰兔尾", "兔佬", "有色/半导低位"),
-        ("yl", "达达鸭儿呀", "鸭佬", "航天/新能源"),
         ("sai", "幸运阿sai", "sai佬", "半导体材料"),
         ("wolf", "-阿狼-", "狼大", "科技/军工"),
+        ("fl", "F佬", "F佬", "超短情绪/量化跟随"),
+        ("xjt", "喜帖街QAQ", "喜帖街", "存储模组/产业周期"),
     ]
 
     # Date formatting
