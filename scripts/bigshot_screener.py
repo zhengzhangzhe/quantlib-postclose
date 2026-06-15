@@ -90,12 +90,85 @@ def load_screen_rules():
     return rules
 
 
+# ── Postclose enrichment ──
+def load_postclose_stocks(days=5):
+    """Load limit-up stocks from recent postclose snapshots."""
+    snap_dir = PROJ / "data" / "postclose"
+    if not snap_dir.exists():
+        return []
+    snaps = sorted(snap_dir.glob("*/snapshot.json"), reverse=True)[:days]
+    stocks = {}
+    for sf in snaps:
+        try:
+            d = json.loads(sf.read_text())
+            for s in d.get("limit_up_stocks", []):
+                code = s.get("code", "")
+                if code and code not in stocks:
+                    stocks[code] = {
+                        "code": code,
+                        "name": s.get("name", code),
+                        "pct": s.get("pct_chg", 0),
+                        "turnover": s.get("turnover", 0),
+                        "float_mkt": s.get("float_mkt", 0),
+                        "net_flow": s.get("net_flow", 0),
+                        "consecutive": s.get("consecutive", 0),
+                        "industry": s.get("industry", ""),
+                        "theme": [t["name"] for t in d.get("themes", [])
+                                  if s.get("name") in t.get("member_stocks", [])],
+                    }
+        except: pass
+    return list(stocks.values())
+
+
+def enrich_with_postclose(profile_name, candidates, postclose_stocks):
+    """Add postclose stocks that match the bigshot's profile but weren't caught by rules."""
+    prof_file = PROJ / "data" / "nga" / "bigshot_profiles" / f"{profile_name}.json"
+    if not prof_file.exists():
+        return candidates
+    profile = json.loads(prof_file.read_text())
+
+    # Build keyword list from sectors + stock_preferences
+    keywords = set()
+    for s in profile.get("sectors", []):
+        name = s["name"] if isinstance(s, dict) else s
+        # Extract key terms from sector name
+        for part in name.replace("/", " ").replace("（", " ").replace("）", " ").split():
+            if len(part) >= 2:
+                keywords.add(part)
+    for sp_list in profile.get("stock_preferences", {}).values():
+        for stock in sp_list:
+            keywords.add(stock)
+
+    seen_codes = {c["code"] for c in candidates}
+    extra = []
+    for ps in postclose_stocks:
+        if ps["code"] in seen_codes:
+            continue
+        score = 0
+        matched = []
+        for kw in keywords:
+            if kw in ps.get("industry", "") or kw in ps.get("name", "") or any(kw in t for t in ps.get("theme", [])):
+                score += 3
+                matched.append(kw)
+        if score >= 3:
+            extra.append({**ps, "score": score, "reasons": [f"复盘出现: {','.join(matched[:3])}"],
+                          "sector": ps.get("industry", "")})
+
+    # Merge and re-sort
+    combined = candidates + sorted(extra, key=lambda x: -x["score"])
+    return combined[:25]
+
+
 # ── Main ──
 def main():
     _build_mapping()
     print(f"全量海选 · {datetime.now().strftime('%H:%M')}")
     stocks = fetch_stocks()
     print(f"数据: {len(stocks)} 只\n")
+
+    print("加载近5日复盘数据...")
+    postclose_stocks = load_postclose_stocks(days=5)
+    print(f"复盘涨停股: {len(postclose_stocks)} 只\n")
 
     rules = load_screen_rules()
     print(f"加载 {len(rules)} 个画像规则\n")
@@ -105,6 +178,7 @@ def main():
     for name, fn in sorted(rules.items()):
         display = SCREEN_KEYS.get(name, name)
         results = fn(stocks)
+        results = enrich_with_postclose(name, results, postclose_stocks)
         print(f"=== {display}: {len(results)} 只 ===")
         for i, c in enumerate(results[:8], 1):
             mkt_str = f" {c['float_mkt']/1e8:.0f}亿" if c.get('float_mkt',0) < 1e14 else ""
