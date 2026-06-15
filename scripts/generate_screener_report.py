@@ -25,7 +25,7 @@ STOCK_KWS = [
 def collect_own_picks():
     """Extract stocks each大佬 mentioned in their posts."""
     result = {}
-    for user in ["-阿狼-","灰兔尾","文驹","幸运阿sai","F佬","喜帖街QAQ"]:
+    for user in ["-阿狼-","灰兔尾","文驹","幸运阿sai","F佬","喜帖街QAQ","猫指导"]:
         pf = PROJ / "data" / "nga" / "bigshot_content" / f"{user}.json"
         if not pf.exists():
             result[user] = set()
@@ -68,6 +68,7 @@ def generate():
         ("wolf", "-阿狼-", "狼大", "科技/军工"),
         ("fl", "F佬", "F佬", "超短情绪/量化跟随"),
         ("xjt", "喜帖街QAQ", "喜帖街", "存储模组/产业周期"),
+        ("mao", "猫指导", "猫指导", "存储芯片/低吸策略"),
     ]
 
     # Date formatting

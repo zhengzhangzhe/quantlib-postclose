@@ -151,6 +151,34 @@ def screen_wolf(stocks):
         if sc >= 4: cand.append({**s,"score":sc,"reasons":rs,"sector":sec})
     return sorted(cand, key=lambda x: -x["score"])
 
+# ── 猫指导: 存储芯片/半导体设备, 低吸+趋势 ──
+MAO_KW = {
+    "存储芯片": ["兆易创新","江波龙","德明利","佰维存储","澜起科技","普冉股份","聚辰股份",
+               "朗科科技","盈新科技","大为股份","同有科技","深科技","东芯股份","恒烁股份","北京君正"],
+    "半导体设备": ["北方华创","中微公司","长川科技","拓荆科技","盛美上海","至纯科技","精测电子"],
+    "半导体材料": ["沪硅产业","立昂微","上海新阳","晶瑞电材","南大光电","容大感光"],
+    "AI算力": ["海光信息","寒武纪","中科曙光","浪潮信息"],
+    "航天卫星": ["中国卫星","信维通信","铖昌科技","华力创通","中国卫通","上海瀚讯"],
+}
+def screen_mao(stocks):
+    cand = []
+    for s in stocks:
+        sec = match_sector(s["name"], MAO_KW)
+        if not sec: continue
+        sc = 0; rs = [sec]
+        # 猫指导: 低吸为主, 偏好温和上涨/回踩
+        if -3 <= s["pct"] <= 0: sc += 4; rs.append("低吸窗口")
+        elif 0 < s["pct"] <= 3: sc += 3; rs.append("企稳筑底")
+        elif 3 < s["pct"] <= 6: sc += 2; rs.append("温和启动")
+        elif s["pct"] > 6: sc += 1  # 强势但不追
+        else: continue
+        if 1 <= s["turnover"] <= 8: sc += 2; rs.append("缩量控盘")
+        elif 8 < s["turnover"] <= 15: sc += 1
+        if s["net_flow"] > 1e7: sc += 1; rs.append("资金流入")
+        if s["float_mkt"] > 50e8: sc += 2; rs.append("容量标的")
+        if sc >= 5: cand.append({**s,"score":sc,"reasons":rs,"sector":sec})
+    return sorted(cand, key=lambda x: -x["score"])
+
 # ── sai佬主题加成（AI算力/光模块/半导体国产化） ──
 SAI_THEME = ["光模块","光通信","中际旭创","天孚通信","新易盛","太辰光","剑桥科技",
              "中芯国际","寒武纪","海光信息","北方华创","中微公司","长电科技",
@@ -168,7 +196,8 @@ def main():
 
     for name, fn in [("文驹(钨/有色)",screen_wj),
         ("兔佬(有色/半导)",screen_tl),
-        ("sai佬(半导材料)",screen_sai),("狼大(科技)",screen_wolf)]:
+        ("sai佬(半导材料)",screen_sai),("狼大(科技)",screen_wolf),
+        ("猫指导(存储/设备)",screen_mao)]:
         results = fn(stocks)
         print(f"=== {name}: {len(results)} 只 ===")
         for i, c in enumerate(results[:8], 1):
@@ -189,6 +218,7 @@ def main():
         "wj": pack(screen_wj(stocks)),
         "tl": pack(screen_tl(stocks)),
         "sai": pack(screen_sai(stocks)), "wolf": pack(screen_wolf(stocks)),
+        "mao": pack(screen_mao(stocks)),
     }
     for path in [out, out_latest]:
         with open(path, "w") as f:
