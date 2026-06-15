@@ -43,29 +43,24 @@ def check_pick(pick: dict, stocks_lookup: dict) -> dict:
     pct = stock.get("pct", 0)
 
     if not target or not close:
-        return {**pick, "verify_status": "无法判断", "verify_detail": f"现价{close} 目标{target or '?'}"}
+        return {**pick, "verify_status": "无法判断", "verify_detail": f"现价{close or '?'} 目标{target or '?'}",
+                "today_close": close, "today_pct": pct}
 
-    # Determine if target was reached
-    # For pullback entries: did price drop to target? (low <= target)
-    # For breakout entries: did price rise to target? (close >= target)
-    is_pullback = any(kw in entry for kw in ["回踩", "回调", "低吸", "缩量", "回落"])
-    is_breakout = any(kw in entry for kw in ["突破", "追", "放量"])
-
-    if is_pullback and close <= target * 1.02:
-        status = "已触发 ✅"
-        detail = f"现价{close} ≤ 目标{target}"
-    elif is_breakout and close >= target:
-        status = "已触发 ✅"
-        detail = f"现价{close} ≥ 目标{target}"
-    elif close > target and is_pullback:
-        status = "等待 ⏳"
-        detail = f"现价{close} > 目标{target}, 未回踩到位"
-    elif close < target and is_breakout:
-        status = "等待 ⏳"
-        detail = f"现价{close} < 目标{target}, 未突破"
+    # Data sanity check: if price is 5x+ of target, likely unit mismatch
+    if close > target * 5:
+        status = "数据存疑 ⚠️"
+        detail = f"现价{close}远大于目标{target}, 可能存在复权或单位差异"
     else:
-        status = "等待 ⏳"
-        detail = f"现价{close} vs 目标{target}"
+        deviation = (close - target) / target * 100
+        if abs(deviation) < 3:
+            status = "接近目标 📍"
+            detail = f"现价{close} 距目标{target}仅{deviation:+.1f}%"
+        elif deviation > 0:
+            status = f"高于目标{deviation:+.0f}%"
+            detail = f"现价{close} > 目标{target}"
+        else:
+            status = f"低于目标{abs(deviation):.0f}%"
+            detail = f"现价{close} < 目标{target}"
 
     return {**pick, "verify_status": status, "verify_detail": detail,
             "today_close": close, "today_pct": pct}
@@ -77,7 +72,7 @@ def render_report(all_checks: dict, today: str) -> str:
          "*昨日大佬选股的入场条件是否触发*", "", "---", ""]
 
     total = 0
-    triggered = 0
+    near = 0
     for name, checks in all_checks.items():
         display = DISPLAY.get(name, name)
         L.append(f"## {display}")
@@ -86,17 +81,22 @@ def render_report(all_checks: dict, today: str) -> str:
         L.append("|---|------|------|-------------|----------|------|")
         for c in checks:
             total += 1
-            if "已触发" in c.get("verify_status", ""):
-                triggered += 1
-            emoji = {"已触发 ✅": "🟢", "等待 ⏳": "🟡", "失效 ❌": "🔴"}.get(
-                c.get("verify_status", ""), "")
+            if "接近目标" in c.get("verify_status", ""):
+                near += 1
+            emoji = {"接近目标 📍": "🟢"}.get(c.get("verify_status", ""), "")
+            if "高于" in c.get("verify_status", ""):
+                emoji = "🟡"
+            elif "低于" in c.get("verify_status", ""):
+                emoji = "🟡"
+            elif "存疑" in c.get("verify_status", ""):
+                emoji = "⚠️"
             L.append(f"| {emoji} | {c['name']}({c['code']}) | {c.get('action','')} | "
                      f"{c.get('entry_timing','')[:30]} | {c.get('verify_status','')} | "
                      f"{c.get('verify_detail','')} |")
         L.append("")
 
     L.append("---")
-    L.append(f"**总计**: {triggered}/{total} 触发")
+    L.append(f"**总计**: {near}/{total} 接近目标, 其余为偏离或数据存疑")
     L.append("")
     L.append(f"*生成于 {datetime.now().strftime('%Y-%m-%d %H:%M')}*")
     return "\n".join(L)
