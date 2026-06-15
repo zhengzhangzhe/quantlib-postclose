@@ -46,6 +46,10 @@ jobs:
           ANTHROPIC_AUTH_TOKEN: ${{ secrets.ANTHROPIC_AUTH_TOKEN }}
         run: python3 scripts/daily_picks.py
 
+      - name: Verify yesterday picks
+        run: python3 scripts/verify_picks.py
+        continue-on-error: true
+
       - name: Run consistency check
         run: python3 scripts/consistency_check.py || echo "校验跳过(无简报数据)"
         continue-on-error: true

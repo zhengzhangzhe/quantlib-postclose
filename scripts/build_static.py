@@ -257,7 +257,7 @@ def build_site():
 <div class="date-card" style="border-color:var(--green)">
     <div class="date">📌 大佬画像</div>
     <div class="stats">{profiles_links}</div>
-	    <div class="stats" style="margin-top:4px"><a href="/quantlib-postclose/p/daily_picks.html">🎯 今日选股</a></div>
+	    <div class="stats" style="margin-top:4px"><a href="/quantlib-postclose/p/daily_picks.html">🎯 今日选股</a> · <a href="/quantlib-postclose/p/verified.html">✅ 选股验证</a></div>
 	</div>
 </div>
 </div>
@@ -319,6 +319,16 @@ def build_site():
             body = md_to_html(latest[0].read_text())
             html = wrap_page("今日选股", body)
             with open(page_dir / "daily_picks.html", "w") as f:
+                f.write(html)
+
+    # Build verified page
+    verify_dir = OUTPUT / "verified"
+    if verify_dir.exists():
+        latest = sorted(verify_dir.glob("*.md"), reverse=True)
+        if latest:
+            body = md_to_html(latest[0].read_text())
+            html = wrap_page("选股验证", body)
+            with open(page_dir / "verified.html", "w") as f:
                 f.write(html)
 
     # Build bigshot profile pages

@@ -324,6 +324,7 @@ def build_llm_context(
     guba_posts: list[dict],
     postclose: dict | None,
     inst_attn: dict | None = None,
+    daily_picks: dict | None = None,
 ) -> str:
     lines = []
     lines.append(f"## 日期：{trade_date} 盘前")
@@ -404,6 +405,24 @@ def build_llm_context(
         for ind, cnt in top_ind:
             lines.append(f"  - {ind}：{cnt}份研报")
         lines.append("参考以上机构热度，对机构密集覆盖的行业可适当提高操作评级。")
+        lines.append("")
+
+    # Yesterday's daily picks — let LLM judge if entry conditions are met today
+    if daily_picks:
+        lines.append("## 昨日大佬选股回顾")
+        lines.append("以下为昨日7位大佬按各自画像精选的标的及入场条件。请根据今日盘前信息判断：")
+        lines.append("1. 哪些标的的入场条件可能在今天触发？")
+        lines.append("2. 哪些需要继续等待？")
+        lines.append("")
+        for name, result in daily_picks.items():
+            display_name = {"幸运阿sai":"sai佬","灰兔尾":"兔佬","文驹":"文驹",
+                           "-阿狼-":"狼大","F佬":"F佬","喜帖街QAQ":"喜帖街","猫指导":"猫指导"}.get(name, name)
+            lines.append(f"### {display_name}（{result.get('bias','')}）")
+            for p in result.get("picks", [])[:3]:
+                lines.append(f"- {p['name']}({p['code']}) {p.get('action','')}: "
+                           f"{p.get('reason','')} | 入场: {p.get('entry_timing','')}")
+            lines.append("")
+        lines.append("请在输出JSON的 `pick_check` 字段中，对每位大佬的选股给出今晨判断。")
         lines.append("")
 
     return "\n".join(lines)
@@ -651,7 +670,15 @@ def main():
         llm_result = llm_default
     else:
         print("\n[2/3] LLM 分析...")
-        context = build_llm_context(trade_date, cctv, tenjqka, sina, xq_flash, guba, postclose, inst_attn)
+        # Load yesterday's daily picks if available
+        daily_picks = None
+        from datetime import date, timedelta
+        yesterday = (date.today() - timedelta(days=1)).isoformat()
+        picks_json = PROJ / "output" / "daily_picks" / f"{yesterday}.json"
+        if picks_json.exists():
+            daily_picks = json.loads(picks_json.read_text())
+            print(f"  加载昨日选股: {len(daily_picks)} 位大佬")
+        context = build_llm_context(trade_date, cctv, tenjqka, sina, xq_flash, guba, postclose, inst_attn, daily_picks)
         print(f"  上下文: {len(context)} 字符")
         print("  调用 DeepSeek...", end=" ", flush=True)
         try:

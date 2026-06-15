@@ -9,6 +9,8 @@ PROJ = Path(__file__).resolve().parent.parent
 API_KEY = os.environ.get("ANTHROPIC_AUTH_TOKEN", "")
 LLM_URL = "https://api.deepseek.com/v1/chat/completions"
 
+from market_data import fetch_fund_flow
+
 # Display mapping
 DISPLAY = {
     "幸运阿sai": "sai佬", "灰兔尾": "兔佬", "文驹": "文驹",
@@ -54,24 +56,9 @@ def load_profile(name: str) -> dict:
 def load_fund_flow_leaders() -> list:
     """Fetch top stocks by net inflow — captures slow-moving institutional leaders."""
     try:
-        import akshare as ak
-        df = ak.stock_fund_flow_individual(symbol="即时")
+        stocks, _ = fetch_fund_flow()
     except Exception:
         return []
-    stocks = []
-    for _, r in df.iterrows():
-        code = str(r["股票代码"]).zfill(6)
-        name = r["股票简称"]
-        pct = float(str(r["涨跌幅"]).replace("%", "")) if r["涨跌幅"] else 0
-        turnover = float(str(r["换手率"]).replace("%", "")) if r["换手率"] else 0
-        nf = str(r["净额"])
-        if "亿" in nf: net_flow = float(nf.replace("亿", "")) * 1e8
-        elif "万" in nf: net_flow = float(nf.replace("万", "")) * 1e4
-        else: net_flow = float(nf) if nf else 0
-        close = float(str(r["最新价"])) if r["最新价"] and str(r["最新价"]) != "nan" else 0
-        stocks.append({"code":code,"name":name,"pct":pct,"turnover":turnover,
-                       "net_flow":net_flow,"close":close,"float_mkt":1e15})
-    # Sort by net inflow, keep top 200
     stocks.sort(key=lambda x: -x["net_flow"])
     return stocks[:200]
 
@@ -262,7 +249,10 @@ def main():
     out_dir.mkdir(parents=True, exist_ok=True)
     report_path = out_dir / f"{today}.md"
     report_path.write_text(report)
-    print(f"\n报告: {report_path}")
+    # Also save structured JSON for verification
+    json_path = out_dir / f"{today}.json"
+    json_path.write_text(json.dumps(all_picks, ensure_ascii=False, indent=2))
+    print(f"\n报告: {report_path} + {json_path}")
 
 
 if __name__ == "__main__":
