@@ -257,7 +257,7 @@ def build_site():
 <div class="date-card" style="border-color:var(--green)">
     <div class="date">📌 大佬画像</div>
     <div class="stats">{profiles_links}</div>
-	    <div class="stats" style="margin-top:4px"><a href="/quantlib-postclose/p/screener.html">📊 每周海选</a></div>
+	    <div class="stats" style="margin-top:4px"><a href="/quantlib-postclose/p/screener.html">📊 每周海选</a> · <a href="/quantlib-postclose/p/daily_picks.html">🎯 今日选股</a></div>
 	</div>
 </div>
 </div>
@@ -310,6 +310,16 @@ def build_site():
                 f.write(html)
 
 
+
+    # Build daily picks page
+    picks_dir = OUTPUT / "daily_picks"
+    if picks_dir.exists():
+        latest = sorted(picks_dir.glob("*.md"), reverse=True)
+        if latest:
+            body = md_to_html(latest[0].read_text())
+            html = wrap_page("今日选股", body)
+            with open(page_dir / "daily_picks.html", "w") as f:
+                f.write(html)
 
     # Build bigshot profile pages
     prof_dir = OUTPUT / "bigshot_profiles"
