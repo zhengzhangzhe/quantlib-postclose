@@ -66,10 +66,10 @@ def check_pick(pick: dict, stocks_lookup: dict) -> dict:
             "today_close": close, "today_pct": pct}
 
 
-def render_report(all_checks: dict, today: str) -> str:
+def render_report(all_checks: dict, today: str, yesterday: str) -> str:
     """Generate verification markdown."""
     L = [f"# 选股验证 · {today}", "",
-         "*昨日大佬选股的入场条件是否触发*", "", "---", ""]
+         f"*验证 {yesterday} 大佬选股的入场条件 — 基于 {today} 收盘数据*", "", "---", ""]
 
     total = 0
     near = 0
@@ -108,13 +108,15 @@ def main():
 
     picks_file = PROJ / "output" / "daily_picks" / f"{yesterday}.json"
     if not picks_file.exists():
-        # Try today (for testing)
-        picks_file = PROJ / "output" / "daily_picks" / f"{today.isoformat()}.json"
-    if not picks_file.exists():
-        print(f"无昨日选股数据 ({picks_file})")
+        # Write a placeholder so the website doesn't 404
+        out_dir = PROJ / "output" / "verified"
+        out_dir.mkdir(parents=True, exist_ok=True)
+        placeholder = f"# 选股验证 · {today.isoformat()}\n\n*暂无昨日选股数据，明日收盘后自动验证*\n"
+        (out_dir / f"{today.isoformat()}.md").write_text(placeholder)
+        print(f"无昨日选股数据，已生成占位页")
         return
 
-    print(f"验证选股 · {today} (数据: {yesterday})")
+    print(f"验证选股 · {today.isoformat()} (昨日数据: {yesterday})")
     all_picks = json.loads(picks_file.read_text())
 
     # Fetch today's market data for price lookup
@@ -132,7 +134,7 @@ def main():
         triggered = sum(1 for c in checks if "已触发" in c.get("verify_status", ""))
         print(f"  {display}: {triggered}/{len(checks)} 触发")
 
-    report = render_report(all_checks, today.isoformat())
+    report = render_report(all_checks, today.isoformat(), yesterday)
     out_dir = PROJ / "output" / "verified"
     out_dir.mkdir(parents=True, exist_ok=True)
     report_path = out_dir / f"{today.isoformat()}.md"
