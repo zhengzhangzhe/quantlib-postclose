@@ -41,9 +41,6 @@ jobs:
       - name: Run bigshot screener (daily)
         run: python3 scripts/bigshot_screener.py
 
-      - name: Generate screener report (daily)
-        run: python3 scripts/generate_screener_report.py
-
       - name: Daily LLM picks (per bigshot)
         env:
           ANTHROPIC_AUTH_TOKEN: ${{ secrets.ANTHROPIC_AUTH_TOKEN }}

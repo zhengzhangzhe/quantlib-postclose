@@ -51,18 +51,84 @@ def load_profile(name: str) -> dict:
     return json.loads(path.read_text())
 
 
+def load_fund_flow_leaders() -> list:
+    """Fetch top stocks by net inflow — captures slow-moving institutional leaders."""
+    try:
+        import akshare as ak
+        df = ak.stock_fund_flow_individual(symbol="即时")
+    except Exception:
+        return []
+    stocks = []
+    for _, r in df.iterrows():
+        code = str(r["股票代码"]).zfill(6)
+        name = r["股票简称"]
+        pct = float(str(r["涨跌幅"]).replace("%", "")) if r["涨跌幅"] else 0
+        turnover = float(str(r["换手率"]).replace("%", "")) if r["换手率"] else 0
+        nf = str(r["净额"])
+        if "亿" in nf: net_flow = float(nf.replace("亿", "")) * 1e8
+        elif "万" in nf: net_flow = float(nf.replace("万", "")) * 1e4
+        else: net_flow = float(nf) if nf else 0
+        close = float(str(r["最新价"])) if r["最新价"] and str(r["最新价"]) != "nan" else 0
+        stocks.append({"code":code,"name":name,"pct":pct,"turnover":turnover,
+                       "net_flow":net_flow,"close":close,"float_mkt":1e15})
+    # Sort by net inflow, keep top 200
+    stocks.sort(key=lambda x: -x["net_flow"])
+    return stocks[:200]
+
+
+def match_profile(name: str, profile: dict, stocks: list) -> list:
+    """Cross-reference stocks with bigshot's profile keywords + stock_preferences."""
+    # Build keyword list from sectors + stock_preferences
+    keywords = set()
+    for s in profile.get("sectors", []):
+        sname = s["name"] if isinstance(s, dict) else s
+        for part in sname.replace("/"," ").replace("（"," ").replace("）"," ").split():
+            if len(part) >= 2: keywords.add(part)
+    for sp_list in profile.get("stock_preferences", {}).values():
+        for stock in sp_list:
+            keywords.add(stock)
+
+    matches = []
+    for s in stocks:
+        matched = []
+        for kw in keywords:
+            if kw in s["name"] or kw in s.get("industry", ""):
+                matched.append(kw)
+        if matched:
+            matches.append({**s, "reasons": [f"资金流入: {','.join(matched[:2])}"],
+                           "score": len(matched) * 2})
+    return sorted(matches, key=lambda x: -x["score"])[:15]
+
+
 def generate_pick(name: str, profile: dict, review: str, candidates: list) -> dict:
     """Call LLM to generate 5 picks for one bigshot."""
     display = DISPLAY.get(name, name)
 
+    # Merge: screener candidates + slow leaders from fund flow
+    seen_codes = set()
+    merged = []
+    for c in candidates[:20]:
+        seen_codes.add(c["code"])
+        merged.append(c)
+
+    # Add slow leaders (not already in candidates)
+    flow_leaders = generate_pick.flow_cache.get(name, [])
+    for s in flow_leaders:
+        if s["code"] not in seen_codes:
+            merged.append(s)
+            seen_codes.add(s["code"])
+            if len(merged) >= 30:
+                break
+
     # Build candidate summary
     cand_text = ""
-    for c in candidates[:20]:
+    for c in merged[:25]:
         reasons = " · ".join(c.get("reasons", [])[:3])
         price = f" 现价{c['close']:.2f}" if c.get('close', 0) > 0 else ""
-        cand_text += f"- {c['name']}({c['code']}) {c['pct']:+.1f}%{price} 换手{c.get('turnover',0):.1f}% {reasons}\n"
+        source = "💰" if "资金流入" in str(c.get("reasons",[])) else ""
+        cand_text += f"- {source}{c['name']}({c['code']}) {c['pct']:+.1f}%{price} 换手{c.get('turnover',0):.1f}% {reasons}\n"
     if not cand_text:
-        cand_text = "（今日无海选候选）"
+        cand_text = "（今日无候选）"
 
     # Profile summary
     prof_text = f"""风格: {profile.get('style','')}
@@ -150,6 +216,18 @@ def main():
 
     review = load_review(today)
     print(f"复盘: {len(review)} 字符")
+
+    # Pre-load slow leaders from fund flow (institutional buying, not limit-up)
+    print("加载资金流慢牛...", end=" ", flush=True)
+    flow_stocks = load_fund_flow_leaders()
+    print(f"{len(flow_stocks)} 只")
+
+    # Cache per-bigshot slow leaders
+    generate_pick.flow_cache = {}
+    for name in DISPLAY:
+        profile = load_profile(name)
+        if profile:
+            generate_pick.flow_cache[name] = match_profile(name, profile, flow_stocks)
 
     screener = load_screener()
     save_keys = {

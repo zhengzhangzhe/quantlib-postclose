@@ -257,7 +257,7 @@ def build_site():
 <div class="date-card" style="border-color:var(--green)">
     <div class="date">📌 大佬画像</div>
     <div class="stats">{profiles_links}</div>
-	    <div class="stats" style="margin-top:4px"><a href="/quantlib-postclose/p/screener.html">📊 每周海选</a> · <a href="/quantlib-postclose/p/daily_picks.html">🎯 今日选股</a></div>
+	    <div class="stats" style="margin-top:4px"><a href="/quantlib-postclose/p/daily_picks.html">🎯 今日选股</a></div>
 	</div>
 </div>
 </div>
