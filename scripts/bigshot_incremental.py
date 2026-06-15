@@ -95,7 +95,7 @@ def main():
             # === A. 主题帖 OP（按时间增量：authorid页最新在前，2页无新即停） ===
             topics = []
             zero_new_streak = 0
-            for pg_num in range(1, 100):
+            for pg_num in range(1, 30):
                 url = f"https://bbs.nga.cn/thread.php?authorid={uid}"
                 if pg_num > 1:
                     url += f"&page={pg_num}"
@@ -152,7 +152,7 @@ def main():
 
             # === B. searchpost 回复（时间驱动） ===
             sp_new = 0
-            for pg_num in range(1, 100):
+            for pg_num in range(1, 50):
                 url = f"https://bbs.nga.cn/thread.php?searchpost=1&authorid={uid}"
                 if pg_num > 1:
                     url += f"&page={pg_num}"
@@ -207,6 +207,10 @@ def main():
 
                 if pg_num % 5 == 1 or found > 0:
                     print(f"  searchpost p{pg_num}: +{found}新")
+
+                # 本页无新增 → 停止（日期检查已放过，后续不会再有新帖）
+                if found == 0:
+                    break
 
                 time.sleep(0.5)
 
