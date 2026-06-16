@@ -672,7 +672,6 @@ def main():
         print("\n[2/3] LLM 分析...")
         # Load yesterday's daily picks if available
         daily_picks = None
-        from datetime import date, timedelta
         yesterday = (date.today() - timedelta(days=1)).isoformat()
         picks_json = PROJ / "output" / "daily_picks" / f"{yesterday}.json"
         if picks_json.exists():
