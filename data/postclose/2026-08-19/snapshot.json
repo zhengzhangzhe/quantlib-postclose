@@ -1,0 +1,594 @@
+{
+  "date": "2026-08-19",
+  "limit_up_count": 36,
+  "failed_count": 12,
+  "limit_down_count": 118,
+  "index_sh": -2.4028745679527175,
+  "index_sz": -5.008331341539185,
+  "themes": [
+    {
+      "name": "食品消费",
+      "type": "主线",
+      "member_stocks": [
+        "金健米业",
+        "京粮控股",
+        "永顺泰"
+      ]
+    },
+    {
+      "name": "医药",
+      "type": "次主线",
+      "member_stocks": [
+        "亨迪药业",
+        "西点药业",
+        "哈三联",
+        "汉森制药"
+      ]
+    },
+    {
+      "name": "煤炭/焦炭",
+      "type": "次主线",
+      "member_stocks": [
+        "宝泰隆",
+        "美锦能源",
+        "陕西黑猫",
+        "大有能源"
+      ]
+    },
+    {
+      "name": "家居用品",
+      "type": "活口",
+      "member_stocks": [
+        "志邦家居",
+        "好太太"
+      ]
+    },
+    {
+      "name": "房地产服务",
+      "type": "活口",
+      "member_stocks": [
+        "南都物业",
+        "我爱我家",
+        "中交发展"
+      ]
+    },
+    {
+      "name": "厨卫电器",
+      "type": "活口",
+      "member_stocks": [
+        "日出东方",
+        "亿田智能",
+        "万和电气"
+      ]
+    },
+    {
+      "name": "农业种植",
+      "type": "活口",
+      "member_stocks": [
+        "万向德农"
+      ]
+    },
+    {
+      "name": "农化制品",
+      "type": "活口",
+      "member_stocks": [
+        "红四方"
+      ]
+    },
+    {
+      "name": "教育",
+      "type": "活口",
+      "member_stocks": [
+        "学大教育"
+      ]
+    },
+    {
+      "name": "电网设备",
+      "type": "活口",
+      "member_stocks": [
+        "日丰股份",
+        "金利华电"
+      ]
+    },
+    {
+      "name": "化学原料",
+      "type": "活口",
+      "member_stocks": [
+        "中毅达",
+        "金能科技"
+      ]
+    },
+    {
+      "name": "炼化及贸易",
+      "type": "活口",
+      "member_stocks": [
+        "华锦股份"
+      ]
+    },
+    {
+      "name": "半导体",
+      "type": "活口",
+      "member_stocks": [
+        "斯达半导"
+      ]
+    },
+    {
+      "name": "装修建材",
+      "type": "活口",
+      "member_stocks": [
+        "罗普斯金"
+      ]
+    },
+    {
+      "name": "电池",
+      "type": "活口",
+      "member_stocks": [
+        "尚太科技"
+      ]
+    },
+    {
+      "name": "食品加工",
+      "type": "活口",
+      "member_stocks": [
+        "百合股份"
+      ]
+    },
+    {
+      "name": "航运港口",
+      "type": "活口",
+      "member_stocks": [
+        "南京港"
+      ]
+    },
+    {
+      "name": "专用设备",
+      "type": "活口",
+      "member_stocks": [
+        "速达股份",
+        "江顺科技"
+      ]
+    },
+    {
+      "name": "光学光电",
+      "type": "活口",
+      "member_stocks": [
+        "深华发A"
+      ]
+    }
+  ],
+  "limit_up_stocks": [
+    {
+      "code": "002333",
+      "name": "罗普斯金",
+      "industry": "装修建材",
+      "pct_chg": 10.06944465637207,
+      "turnover": 2.1164565086364746,
+      "float_mkt": 4225669995.42,
+      "net_flow": -89434300.0,
+      "first_time": "092500",
+      "consecutive": 1,
+      "break_cnt": 0
+    },
+    {
+      "code": "002953",
+      "name": "日丰股份",
+      "industry": "电网设备",
+      "pct_chg": 10.03752326965332,
+      "turnover": 8.330615997314453,
+      "float_mkt": 3299517248.6400003,
+      "net_flow": -227999999.99999997,
+      "first_time": "092500",
+      "consecutive": 2,
+      "break_cnt": 1
+    },
+    {
+      "code": "600127",
+      "name": "金健米业",
+      "industry": "农产品加",
+      "pct_chg": 9.98593521118164,
+      "turnover": 4.560832500457764,
+      "float_mkt": 5018744764.76,
+      "net_flow": -229000000.0,
+      "first_time": "092502",
+      "consecutive": 3,
+      "break_cnt": 0
+    },
+    {
+      "code": "600783",
+      "name": "鲁信创投",
+      "industry": "通用设备",
+      "pct_chg": 10.027247428894043,
+      "turnover": 5.969210147857666,
+      "float_mkt": 15028614145.86,
+      "net_flow": -836000000.0,
+      "first_time": "092502",
+      "consecutive": 1,
+      "break_cnt": 1
+    },
+    {
+      "code": "603395",
+      "name": "红四方",
+      "industry": "农化制品",
+      "pct_chg": 10.015174865722656,
+      "turnover": 18.110715866088867,
+      "float_mkt": 1885000000.0,
+      "net_flow": -213000000.0,
+      "first_time": "092502",
+      "consecutive": 3,
+      "break_cnt": 1
+    },
+    {
+      "code": "000020",
+      "name": "深华发A",
+      "industry": "光学光电",
+      "pct_chg": 10.00800609588623,
+      "turnover": 10.565042495727539,
+      "float_mkt": 2489212472.34,
+      "net_flow": -173000000.0,
+      "first_time": "093000",
+      "consecutive": 2,
+      "break_cnt": 1
+    },
+    {
+      "code": "601011",
+      "name": "宝泰隆",
+      "industry": "焦炭Ⅱ",
+      "pct_chg": 10.144927024841309,
+      "turnover": 3.8014347553253174,
+      "float_mkt": 5823620198.56,
+      "net_flow": -124000000.0,
+      "first_time": "093002",
+      "consecutive": 1,
+      "break_cnt": 0
+    },
+    {
+      "code": "603506",
+      "name": "南都物业",
+      "industry": "房地产服",
+      "pct_chg": 10.0,
+      "turnover": 4.0041937828063965,
+      "float_mkt": 2230800014.52,
+      "net_flow": -48354900.0,
+      "first_time": "093014",
+      "consecutive": 1,
+      "break_cnt": 1
+    },
+    {
+      "code": "600371",
+      "name": "万向德农",
+      "industry": "种植业",
+      "pct_chg": 9.950860023498535,
+      "turnover": 18.174043655395508,
+      "float_mkt": 2618573100.0,
+      "net_flow": -73880800.0,
+      "first_time": "093118",
+      "consecutive": 2,
+      "break_cnt": 5
+    },
+    {
+      "code": "001301",
+      "name": "尚太科技",
+      "industry": "电池",
+      "pct_chg": 10.007059097290039,
+      "turnover": 6.242081642150879,
+      "float_mkt": 16211346497.38,
+      "net_flow": -463999999.99999994,
+      "first_time": "093121",
+      "consecutive": 1,
+      "break_cnt": 10
+    },
+    {
+      "code": "002900",
+      "name": "哈三联",
+      "industry": "化学制药",
+      "pct_chg": 9.992961883544922,
+      "turnover": 12.879672050476074,
+      "float_mkt": 2518343112.0,
+      "net_flow": -208000000.0,
+      "first_time": "093127",
+      "consecutive": 1,
+      "break_cnt": 1
+    },
+    {
+      "code": "000505",
+      "name": "京粮控股",
+      "industry": "农产品加",
+      "pct_chg": 10.014727592468262,
+      "turnover": 10.736207008361816,
+      "float_mkt": 4723881109.92,
+      "net_flow": -276000000.0,
+      "first_time": "093133",
+      "consecutive": 3,
+      "break_cnt": 0
+    },
+    {
+      "code": "603102",
+      "name": "百合股份",
+      "industry": "食品加工",
+      "pct_chg": 10.0,
+      "turnover": 11.476014137268066,
+      "float_mkt": 2928640000.0,
+      "net_flow": -149000000.0,
+      "first_time": "093233",
+      "consecutive": 1,
+      "break_cnt": 0
+    },
+    {
+      "code": "603801",
+      "name": "志邦家居",
+      "industry": "家居用品",
+      "pct_chg": 10.050251007080078,
+      "turnover": 3.122469425201416,
+      "float_mkt": 2853689243.31,
+      "net_flow": -47131100.0,
+      "first_time": "093238",
+      "consecutive": 1,
+      "break_cnt": 1
+    },
+    {
+      "code": "000526",
+      "name": "学大教育",
+      "industry": "教育",
+      "pct_chg": 9.98874568939209,
+      "turnover": 7.69510555267334,
+      "float_mkt": 4748399466.81,
+      "net_flow": -36410900.0,
+      "first_time": "093324",
+      "consecutive": 2,
+      "break_cnt": 1
+    },
+    {
+      "code": "000560",
+      "name": "我爱我家",
+      "industry": "房地产服",
+      "pct_chg": 10.185185432434082,
+      "turnover": 18.32952308654785,
+      "float_mkt": 5565478141.719999,
+      "net_flow": -379000000.0,
+      "first_time": "093327",
+      "consecutive": 1,
+      "break_cnt": 4
+    },
+    {
+      "code": "002412",
+      "name": "汉森制药",
+      "industry": "中药Ⅱ",
+      "pct_chg": 10.065360069274902,
+      "turnover": 6.379430294036865,
+      "float_mkt": 4191854900.0,
+      "net_flow": -100000000.0,
+      "first_time": "093342",
+      "consecutive": 1,
+      "break_cnt": 1
+    },
+    {
+      "code": "000736",
+      "name": "中交发展",
+      "industry": "房地产服",
+      "pct_chg": 10.112359046936035,
+      "turnover": 4.42814302444458,
+      "float_mkt": 3660782164.9,
+      "net_flow": -76994100.0,
+      "first_time": "093348",
+      "consecutive": 1,
+      "break_cnt": 0
+    },
+    {
+      "code": "301211",
+      "name": "亨迪药业",
+      "industry": "化学制药",
+      "pct_chg": 19.966997146606445,
+      "turnover": 13.694334030151367,
+      "float_mkt": 6071851656.0,
+      "net_flow": -204000000.0,
+      "first_time": "093436",
+      "consecutive": 1,
+      "break_cnt": 4
+    },
+    {
+      "code": "000723",
+      "name": "美锦能源",
+      "industry": "焦炭Ⅱ",
+      "pct_chg": 9.887005805969238,
+      "turnover": 4.2342329025268555,
+      "float_mkt": 17097234803.380001,
+      "net_flow": -159000000.0,
+      "first_time": "093536",
+      "consecutive": 1,
+      "break_cnt": 2
+    },
+    {
+      "code": "301130",
+      "name": "西点药业",
+      "industry": "化学制药",
+      "pct_chg": 19.98562240600586,
+      "turnover": 28.163236618041992,
+      "float_mkt": 1969999476.8000002,
+      "net_flow": -61682900.0,
+      "first_time": "093542",
+      "consecutive": 1,
+      "break_cnt": 1
+    },
+    {
+      "code": "603848",
+      "name": "好太太",
+      "industry": "家居用品",
+      "pct_chg": 9.977494239807129,
+      "turnover": 2.217052936553955,
+      "float_mkt": 5899279451.26,
+      "net_flow": -64550200.00000001,
+      "first_time": "093616",
+      "consecutive": 1,
+      "break_cnt": 2
+    },
+    {
+      "code": "001277",
+      "name": "速达股份",
+      "industry": "专用设备",
+      "pct_chg": 10.010009765625,
+      "turnover": 5.547394752502441,
+      "float_mkt": 1501766652.33,
+      "net_flow": -68309300.0,
+      "first_time": "094227",
+      "consecutive": 1,
+      "break_cnt": 0
+    },
+    {
+      "code": "001338",
+      "name": "永顺泰",
+      "industry": "农产品加",
+      "pct_chg": 10.057143211364746,
+      "turnover": 6.050739288330078,
+      "float_mkt": 4831667931.42,
+      "net_flow": -136000000.0,
+      "first_time": "094515",
+      "consecutive": 1,
+      "break_cnt": 7
+    },
+    {
+      "code": "600403",
+      "name": "大有能源",
+      "industry": "煤炭开采",
+      "pct_chg": 10.0,
+      "turnover": 5.202277660369873,
+      "float_mkt": 16305340581.640001,
+      "net_flow": -44894799.99999999,
+      "first_time": "094829",
+      "consecutive": 1,
+      "break_cnt": 0
+    },
+    {
+      "code": "603290",
+      "name": "斯达半导",
+      "industry": "半导体",
+      "pct_chg": 10.001096725463867,
+      "turnover": 8.758039474487305,
+      "float_mkt": 24021583374.46,
+      "net_flow": -694000000.0,
+      "first_time": "095313",
+      "consecutive": 1,
+      "break_cnt": 2
+    },
+    {
+      "code": "001400",
+      "name": "江顺科技",
+      "industry": "专用设备",
+      "pct_chg": 9.996160507202148,
+      "turnover": 13.545987129211426,
+      "float_mkt": 3973135110.0,
+      "net_flow": -77617400.0,
+      "first_time": "095445",
+      "consecutive": 1,
+      "break_cnt": 2
+    },
+    {
+      "code": "300069",
+      "name": "金利华电",
+      "industry": "电网设备",
+      "pct_chg": 20.013851165771484,
+      "turnover": 16.505449295043945,
+      "float_mkt": 4055219999.9999995,
+      "net_flow": -86603000.0,
+      "first_time": "095927",
+      "consecutive": 1,
+      "break_cnt": 1
+    },
+    {
+      "code": "601015",
+      "name": "陕西黑猫",
+      "industry": "焦炭Ⅱ",
+      "pct_chg": 10.089020729064941,
+      "turnover": 7.6814374923706055,
+      "float_mkt": 7577666240.69,
+      "net_flow": -47941500.0,
+      "first_time": "101531",
+      "consecutive": 1,
+      "break_cnt": 1
+    },
+    {
+      "code": "600610",
+      "name": "中毅达",
+      "industry": "化学原料",
+      "pct_chg": 10.014103889465332,
+      "turnover": 6.71243143081665,
+      "float_mkt": 5528068299.0,
+      "net_flow": -90784599.99999999,
+      "first_time": "102435",
+      "consecutive": 1,
+      "break_cnt": 2
+    },
+    {
+      "code": "603366",
+      "name": "日出东方",
+      "industry": "厨卫电器",
+      "pct_chg": 9.942362785339355,
+      "turnover": 4.9358930587768555,
+      "float_mkt": 6203557010.63,
+      "net_flow": -55512500.0,
+      "first_time": "110113",
+      "consecutive": 1,
+      "break_cnt": 0
+    },
+    {
+      "code": "002040",
+      "name": "南 京 港",
+      "industry": "航运港口",
+      "pct_chg": 9.951457023620605,
+      "turnover": 6.485558986663818,
+      "float_mkt": 4403843531.7,
+      "net_flow": -117000000.0,
+      "first_time": "112209",
+      "consecutive": 1,
+      "break_cnt": 3
+    },
+    {
+      "code": "000059",
+      "name": "华锦股份",
+      "industry": "炼化及贸",
+      "pct_chg": 9.978307723999023,
+      "turnover": 5.144987106323242,
+      "float_mkt": 8109023844.09,
+      "net_flow": -31823900.0,
+      "first_time": "130551",
+      "consecutive": 1,
+      "break_cnt": 1
+    },
+    {
+      "code": "300911",
+      "name": "亿田智能",
+      "industry": "厨卫电器",
+      "pct_chg": 19.981998443603516,
+      "turnover": 19.352800369262695,
+      "float_mkt": 4568039597.86,
+      "net_flow": 159000000.0,
+      "first_time": "130754",
+      "consecutive": 1,
+      "break_cnt": 0
+    },
+    {
+      "code": "002543",
+      "name": "万和电气",
+      "industry": "厨卫电器",
+      "pct_chg": 10.029069900512695,
+      "turnover": 5.285464286804199,
+      "float_mkt": 5008449024.570001,
+      "net_flow": 20003700.0,
+      "first_time": "135157",
+      "consecutive": 1,
+      "break_cnt": 0
+    },
+    {
+      "code": "603113",
+      "name": "金能科技",
+      "industry": "化学原料",
+      "pct_chg": 10.04273509979248,
+      "turnover": 4.465234756469727,
+      "float_mkt": 4369726672.400001,
+      "net_flow": -1330700.0,
+      "first_time": "141202",
+      "consecutive": 1,
+      "break_cnt": 0
+    }
+  ],
+  "institute_attention": []
+}
