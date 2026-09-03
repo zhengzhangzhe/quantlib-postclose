@@ -1,0 +1,691 @@
+{
+  "date": "2026-09-03",
+  "limit_up_count": 44,
+  "failed_count": 33,
+  "limit_down_count": 16,
+  "index_sh": 0.01781099339166481,
+  "index_sz": 0.09973150002713371,
+  "themes": [
+    {
+      "name": "工业金属/贵金属",
+      "type": "主线",
+      "member_stocks": [
+        "白银有色"
+      ]
+    },
+    {
+      "name": "金融权重",
+      "type": "趋势型主线",
+      "member_stocks": []
+    },
+    {
+      "name": "电网设备",
+      "type": "主线",
+      "member_stocks": [
+        "太阳电缆",
+        "华盛昌"
+      ]
+    },
+    {
+      "name": "零售",
+      "type": "主线",
+      "member_stocks": [
+        "国芳集团",
+        "百大集团",
+        "东百集团"
+      ]
+    },
+    {
+      "name": "汽车零部件",
+      "type": "次主线",
+      "member_stocks": [
+        "光洋股份",
+        "明新旭腾",
+        "冠盛股份",
+        "新朋股份"
+      ]
+    },
+    {
+      "name": "包装印刷",
+      "type": "次主线",
+      "member_stocks": [
+        "金富科技",
+        "嘉美包装",
+        "华源控股"
+      ]
+    },
+    {
+      "name": "化学制药",
+      "type": "次主线",
+      "member_stocks": [
+        "美诺华",
+        "德展健康",
+        "千金药业"
+      ]
+    },
+    {
+      "name": "通用设备",
+      "type": "次主线",
+      "member_stocks": [
+        "金帝股份",
+        "宏盛股份",
+        "大元泵业"
+      ]
+    },
+    {
+      "name": "电力",
+      "type": "活口",
+      "member_stocks": [
+        "恒盛能源",
+        "郴电国际"
+      ]
+    },
+    {
+      "name": "旅游",
+      "type": "活口",
+      "member_stocks": [
+        "云南旅游"
+      ]
+    },
+    {
+      "name": "房地产",
+      "type": "活口",
+      "member_stocks": [
+        "信达地产"
+      ]
+    },
+    {
+      "name": "IT服务",
+      "type": "活口",
+      "member_stocks": [
+        "新炬网络",
+        "海量数据"
+      ]
+    },
+    {
+      "name": "出版传媒",
+      "type": "活口",
+      "member_stocks": [
+        "龙版传媒"
+      ]
+    },
+    {
+      "name": "化学制品",
+      "type": "活口",
+      "member_stocks": [
+        "集泰股份",
+        "中毅达"
+      ]
+    },
+    {
+      "name": "光学光电",
+      "type": "活口",
+      "member_stocks": [
+        "三安光电"
+      ]
+    },
+    {
+      "name": "航运港口",
+      "type": "活口",
+      "member_stocks": [
+        "海通发展"
+      ]
+    },
+    {
+      "name": "电机",
+      "type": "活口",
+      "member_stocks": [
+        "鸣志电器"
+      ]
+    },
+    {
+      "name": "其他",
+      "type": "活口",
+      "member_stocks": [
+        "亚盛集团",
+        "大众交通",
+        "珠免集团",
+        "美能能源",
+        "爱仕达",
+        "博云新材",
+        "德尔未来",
+        "思泉新材",
+        "凯迪股份",
+        "科新发展",
+        "万朗磁塑",
+        "艾华集团"
+      ]
+    }
+  ],
+  "limit_up_stocks": [
+    {
+      "code": "002059",
+      "name": "云南旅游",
+      "industry": "旅游及景",
+      "pct_chg": 10.095237731933594,
+      "turnover": 2.527831554412842,
+      "float_mkt": 5724472961.88,
+      "net_flow": -144000000.0,
+      "first_time": "092500",
+      "consecutive": 2,
+      "break_cnt": 0
+    },
+    {
+      "code": "002909",
+      "name": "集泰股份",
+      "industry": "化学制品",
+      "pct_chg": 10.027472496032715,
+      "turnover": 12.09166145324707,
+      "float_mkt": 3047223337.83,
+      "net_flow": -336000000.0,
+      "first_time": "092500",
+      "consecutive": 4,
+      "break_cnt": 1
+    },
+    {
+      "code": "605398",
+      "name": "新炬网络",
+      "industry": "IT服务Ⅱ",
+      "pct_chg": 9.981851577758789,
+      "turnover": 1.121903657913208,
+      "float_mkt": 3944245026.9599996,
+      "net_flow": -44250600.00000001,
+      "first_time": "092502",
+      "consecutive": 1,
+      "break_cnt": 0
+    },
+    {
+      "code": "601086",
+      "name": "国芳集团",
+      "industry": "一般零售",
+      "pct_chg": 10.0,
+      "turnover": 8.77181625366211,
+      "float_mkt": 8131860000.000001,
+      "net_flow": -345000000.0,
+      "first_time": "093037",
+      "consecutive": 5,
+      "break_cnt": 2
+    },
+    {
+      "code": "002300",
+      "name": "太阳电缆",
+      "industry": "电网设备",
+      "pct_chg": 9.960680961608887,
+      "turnover": 8.290498733520508,
+      "float_mkt": 6060028285.900001,
+      "net_flow": -162000000.0,
+      "first_time": "093203",
+      "consecutive": 2,
+      "break_cnt": 0
+    },
+    {
+      "code": "300830",
+      "name": "金现代",
+      "industry": "软件开发",
+      "pct_chg": 19.97621726989746,
+      "turnover": 10.164310455322266,
+      "float_mkt": 3399671849.48,
+      "net_flow": -162000000.0,
+      "first_time": "093206",
+      "consecutive": 1,
+      "break_cnt": 0
+    },
+    {
+      "code": "605577",
+      "name": "龙版传媒",
+      "industry": "出版",
+      "pct_chg": 10.038910865783691,
+      "turnover": 11.122936248779297,
+      "float_mkt": 6284444452.3,
+      "net_flow": -204000000.0,
+      "first_time": "093208",
+      "consecutive": 4,
+      "break_cnt": 2
+    },
+    {
+      "code": "603138",
+      "name": "海量数据",
+      "industry": "IT服务Ⅱ",
+      "pct_chg": 10.015174865722656,
+      "turnover": 3.353175163269043,
+      "float_mkt": 4180971325.0,
+      "net_flow": -35831000.0,
+      "first_time": "093226",
+      "consecutive": 1,
+      "break_cnt": 1
+    },
+    {
+      "code": "603728",
+      "name": "鸣志电器",
+      "industry": "电机Ⅱ",
+      "pct_chg": 10.0,
+      "turnover": 2.0765914916992188,
+      "float_mkt": 22347381375.0,
+      "net_flow": -254000000.0,
+      "first_time": "093256",
+      "consecutive": 1,
+      "break_cnt": 1
+    },
+    {
+      "code": "603270",
+      "name": "金帝股份",
+      "industry": "通用设备",
+      "pct_chg": 10.009443283081055,
+      "turnover": 12.772638320922852,
+      "float_mkt": 2471547511.65,
+      "net_flow": -59021100.0,
+      "first_time": "093351",
+      "consecutive": 2,
+      "break_cnt": 0
+    },
+    {
+      "code": "002980",
+      "name": "华盛昌",
+      "industry": "电网设备",
+      "pct_chg": 10.004125595092773,
+      "turnover": 14.672252655029297,
+      "float_mkt": 10803252114.539999,
+      "net_flow": -159000000.0,
+      "first_time": "093418",
+      "consecutive": 1,
+      "break_cnt": 2
+    },
+    {
+      "code": "603162",
+      "name": "海通发展",
+      "industry": "航运港口",
+      "pct_chg": 10.0,
+      "turnover": 18.357364654541016,
+      "float_mkt": 5622625475.940001,
+      "net_flow": -250000000.0,
+      "first_time": "093424",
+      "consecutive": 1,
+      "break_cnt": 5
+    },
+    {
+      "code": "600703",
+      "name": "三安光电",
+      "industry": "光学光电",
+      "pct_chg": 9.97624683380127,
+      "turnover": 5.031612396240234,
+      "float_mkt": 69297470118.03,
+      "net_flow": -681000000.0,
+      "first_time": "093512",
+      "consecutive": 1,
+      "break_cnt": 2
+    },
+    {
+      "code": "605088",
+      "name": "冠盛股份",
+      "industry": "汽车零部",
+      "pct_chg": 10.025189399719238,
+      "turnover": 4.390988349914551,
+      "float_mkt": 4394074623.12,
+      "net_flow": -67788500.0,
+      "first_time": "093858",
+      "consecutive": 1,
+      "break_cnt": 1
+    },
+    {
+      "code": "600108",
+      "name": "亚盛集团",
+      "industry": "种植业",
+      "pct_chg": 10.0,
+      "turnover": 9.668806076049805,
+      "float_mkt": 7709783879.16,
+      "net_flow": -421000000.0,
+      "first_time": "094055",
+      "consecutive": 1,
+      "break_cnt": 1
+    },
+    {
+      "code": "600611",
+      "name": "大众交通",
+      "industry": "铁路公路",
+      "pct_chg": 10.04273509979248,
+      "turnover": 12.037693977355957,
+      "float_mkt": 8051079274.6,
+      "net_flow": -413999999.99999994,
+      "first_time": "094207",
+      "consecutive": 1,
+      "break_cnt": 4
+    },
+    {
+      "code": "605068",
+      "name": "明新旭腾",
+      "industry": "汽车零部",
+      "pct_chg": 10.018726348876953,
+      "turnover": 7.664033889770508,
+      "float_mkt": 3811664632.5,
+      "net_flow": -18043200.0,
+      "first_time": "094400",
+      "consecutive": 1,
+      "break_cnt": 4
+    },
+    {
+      "code": "605580",
+      "name": "恒盛能源",
+      "industry": "电力",
+      "pct_chg": 10.016155242919922,
+      "turnover": 2.869128465652466,
+      "float_mkt": 5720400000.0,
+      "net_flow": -71335600.0,
+      "first_time": "094430",
+      "consecutive": 1,
+      "break_cnt": 1
+    },
+    {
+      "code": "600185",
+      "name": "珠免集团",
+      "industry": "旅游零售",
+      "pct_chg": 10.0,
+      "turnover": 2.977829933166504,
+      "float_mkt": 9952830597.6,
+      "net_flow": 8636900.0,
+      "first_time": "094440",
+      "consecutive": 1,
+      "break_cnt": 1
+    },
+    {
+      "code": "600969",
+      "name": "郴电国际",
+      "industry": "电力",
+      "pct_chg": 9.969167709350586,
+      "turnover": 5.222325325012207,
+      "float_mkt": 3959540178.7999997,
+      "net_flow": -40671200.0,
+      "first_time": "094546",
+      "consecutive": 1,
+      "break_cnt": 0
+    },
+    {
+      "code": "002708",
+      "name": "光洋股份",
+      "industry": "汽车零部",
+      "pct_chg": 10.028247833251953,
+      "turnover": 18.50470542907715,
+      "float_mkt": 7940040868.58,
+      "net_flow": -381000000.0,
+      "first_time": "095012",
+      "consecutive": 2,
+      "break_cnt": 20
+    },
+    {
+      "code": "600610",
+      "name": "中毅达",
+      "industry": "化学原料",
+      "pct_chg": 9.965237617492676,
+      "turnover": 10.656686782836914,
+      "float_mkt": 6725816430.45,
+      "net_flow": -221000000.0,
+      "first_time": "100003",
+      "consecutive": 1,
+      "break_cnt": 0
+    },
+    {
+      "code": "001299",
+      "name": "美能能源",
+      "industry": "燃气Ⅱ",
+      "pct_chg": 9.970958709716797,
+      "turnover": 6.5277180671691895,
+      "float_mkt": 3207356022.08,
+      "net_flow": -90855200.0,
+      "first_time": "100100",
+      "consecutive": 1,
+      "break_cnt": 0
+    },
+    {
+      "code": "600865",
+      "name": "百大集团",
+      "industry": "一般零售",
+      "pct_chg": 10.021322250366211,
+      "turnover": 6.518707275390625,
+      "float_mkt": 3882800061.12,
+      "net_flow": -77195300.0,
+      "first_time": "100506",
+      "consecutive": 1,
+      "break_cnt": 2
+    },
+    {
+      "code": "003018",
+      "name": "金富科技",
+      "industry": "包装印刷",
+      "pct_chg": 10.0,
+      "turnover": 7.088806629180908,
+      "float_mkt": 16054986935.789999,
+      "net_flow": -89173100.0,
+      "first_time": "100606",
+      "consecutive": 1,
+      "break_cnt": 0
+    },
+    {
+      "code": "002403",
+      "name": "爱仕达",
+      "industry": "小家电",
+      "pct_chg": 9.978541374206543,
+      "turnover": 2.6515719890594482,
+      "float_mkt": 3045904903.5,
+      "net_flow": -32827000.0,
+      "first_time": "100803",
+      "consecutive": 1,
+      "break_cnt": 0
+    },
+    {
+      "code": "002969",
+      "name": "嘉美包装",
+      "industry": "包装印刷",
+      "pct_chg": 10.008203506469727,
+      "turnover": 3.6600492000579834,
+      "float_mkt": 14653559507.04,
+      "net_flow": -5078400.0,
+      "first_time": "101936",
+      "consecutive": 1,
+      "break_cnt": 1
+    },
+    {
+      "code": "603538",
+      "name": "美诺华",
+      "industry": "化学制药",
+      "pct_chg": 10.0,
+      "turnover": 19.26879119873047,
+      "float_mkt": 9598849403.99,
+      "net_flow": -70190600.0,
+      "first_time": "102328",
+      "consecutive": 1,
+      "break_cnt": 3
+    },
+    {
+      "code": "002297",
+      "name": "博云新材",
+      "industry": "航空装备",
+      "pct_chg": 10.0,
+      "turnover": 31.38115119934082,
+      "float_mkt": 12608306018.0,
+      "net_flow": -70254000.0,
+      "first_time": "102554",
+      "consecutive": 2,
+      "break_cnt": 5
+    },
+    {
+      "code": "600657",
+      "name": "信达地产",
+      "industry": "房地产开",
+      "pct_chg": 10.163934707641602,
+      "turnover": 4.717403411865234,
+      "float_mkt": 9582312079.199999,
+      "net_flow": -104000000.0,
+      "first_time": "102756",
+      "consecutive": 2,
+      "break_cnt": 0
+    },
+    {
+      "code": "002787",
+      "name": "华源控股",
+      "industry": "包装印刷",
+      "pct_chg": 10.009016990661621,
+      "turnover": 9.631104469299316,
+      "float_mkt": 6053231007.2,
+      "net_flow": -42018600.0,
+      "first_time": "103503",
+      "consecutive": 1,
+      "break_cnt": 2
+    },
+    {
+      "code": "002631",
+      "name": "德尔未来",
+      "industry": "家居用品",
+      "pct_chg": 9.97038459777832,
+      "turnover": 5.23525857925415,
+      "float_mkt": 8841704951.28,
+      "net_flow": 5462200.0,
+      "first_time": "111709",
+      "consecutive": 1,
+      "break_cnt": 1
+    },
+    {
+      "code": "301489",
+      "name": "思泉新材",
+      "industry": "电子化学",
+      "pct_chg": 20.0,
+      "turnover": 22.45143699645996,
+      "float_mkt": 9769139686.800001,
+      "net_flow": 83431000.0,
+      "first_time": "112157",
+      "consecutive": 1,
+      "break_cnt": 1
+    },
+    {
+      "code": "002328",
+      "name": "新朋股份",
+      "industry": "汽车零部",
+      "pct_chg": 10.0217866897583,
+      "turnover": 26.368131637573242,
+      "float_mkt": 5763927549.599999,
+      "net_flow": -13670500.0,
+      "first_time": "112433",
+      "consecutive": 1,
+      "break_cnt": 1
+    },
+    {
+      "code": "601212",
+      "name": "白银有色",
+      "industry": "工业金属",
+      "pct_chg": 10.060060501098633,
+      "turnover": 7.949134826660156,
+      "float_mkt": 54276997165.63,
+      "net_flow": 399000000.0,
+      "first_time": "130136",
+      "consecutive": 1,
+      "break_cnt": 2
+    },
+    {
+      "code": "600693",
+      "name": "东百集团",
+      "industry": "一般零售",
+      "pct_chg": 9.960159301757812,
+      "turnover": 17.25373077392578,
+      "float_mkt": 9593238713.279999,
+      "net_flow": 34128500.0,
+      "first_time": "130157",
+      "consecutive": 1,
+      "break_cnt": 0
+    },
+    {
+      "code": "605288",
+      "name": "凯迪股份",
+      "industry": "自动化设",
+      "pct_chg": 10.006082534790039,
+      "turnover": 3.865783452987671,
+      "float_mkt": 7109465026.18,
+      "net_flow": 15841700.0,
+      "first_time": "131335",
+      "consecutive": 1,
+      "break_cnt": 0
+    },
+    {
+      "code": "600234",
+      "name": "科新发展",
+      "industry": "装修装饰",
+      "pct_chg": 10.009624481201172,
+      "turnover": 2.2251174449920654,
+      "float_mkt": 6001229442.78,
+      "net_flow": -11841400.000000002,
+      "first_time": "131432",
+      "consecutive": 1,
+      "break_cnt": 5
+    },
+    {
+      "code": "603090",
+      "name": "宏盛股份",
+      "industry": "通用设备",
+      "pct_chg": 9.995039939880371,
+      "turnover": 15.00059986114502,
+      "float_mkt": 4435000000.0,
+      "net_flow": 9210500.0,
+      "first_time": "134401",
+      "consecutive": 1,
+      "break_cnt": 0
+    },
+    {
+      "code": "603757",
+      "name": "大元泵业",
+      "industry": "通用设备",
+      "pct_chg": 9.997230529785156,
+      "turnover": 9.60910415649414,
+      "float_mkt": 14819314254.96,
+      "net_flow": 5428600.0,
+      "first_time": "134915",
+      "consecutive": 1,
+      "break_cnt": 1
+    },
+    {
+      "code": "603150",
+      "name": "万朗磁塑",
+      "industry": "塑料",
+      "pct_chg": 10.0,
+      "turnover": 5.461085796356201,
+      "float_mkt": 5312768450.0,
+      "net_flow": -23669300.0,
+      "first_time": "135949",
+      "consecutive": 1,
+      "break_cnt": 0
+    },
+    {
+      "code": "603989",
+      "name": "艾华集团",
+      "industry": "元件",
+      "pct_chg": 9.993132591247559,
+      "turnover": 11.687871932983398,
+      "float_mkt": 12772918915.800001,
+      "net_flow": 168000000.0,
+      "first_time": "140139",
+      "consecutive": 1,
+      "break_cnt": 0
+    },
+    {
+      "code": "000813",
+      "name": "德展健康",
+      "industry": "化学制药",
+      "pct_chg": 10.060976028442383,
+      "turnover": 5.587330341339111,
+      "float_mkt": 7568899424.4,
+      "net_flow": -14563000.0,
+      "first_time": "142248",
+      "consecutive": 1,
+      "break_cnt": 0
+    },
+    {
+      "code": "600479",
+      "name": "千金药业",
+      "industry": "中药Ⅱ",
+      "pct_chg": 10.030863761901855,
+      "turnover": 29.673860549926758,
+      "float_mkt": 5967911488.42,
+      "net_flow": -48398900.0,
+      "first_time": "145337",
+      "consecutive": 1,
+      "break_cnt": 0
+    }
+  ],
+  "institute_attention": []
+}
