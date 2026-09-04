@@ -1,24 +1,10 @@
 {
-  "date": "2026-09-03",
+  "date": "2026-09-04",
   "wolf": [
-    {
-      "name": "江丰电子",
-      "code": "300666",
-      "pct": 0.91,
-      "reasons": [
-        "核心标的",
-        "半导体材料板块",
-        "低吸条件满足"
-      ],
-      "sector": "",
-      "score": 43,
-      "close": 227.5,
-      "turnover": 2.9
-    },
     {
       "name": "中船特气",
       "code": "688146",
-      "pct": -0.05,
+      "pct": -2.09,
       "reasons": [
         "核心标的",
         "半导体材料板块",
@@ -26,55 +12,13 @@
       ],
       "sector": "",
       "score": 43,
-      "close": 231.89,
-      "turnover": 5.01
-    },
-    {
-      "name": "鼎龙股份",
-      "code": "300054",
-      "pct": -0.32,
-      "reasons": [
-        "核心标的",
-        "半导体材料板块",
-        "低吸条件满足"
-      ],
-      "sector": "",
-      "score": 43,
-      "close": 68.51,
-      "turnover": 2.0
-    },
-    {
-      "name": "神工股份",
-      "code": "688233",
-      "pct": 2.72,
-      "reasons": [
-        "关注标的",
-        "半导体材料板块",
-        "低吸条件满足"
-      ],
-      "sector": "",
-      "score": 33,
-      "close": 98.1,
-      "turnover": 4.03
-    },
-    {
-      "name": "沪硅产业",
-      "code": "688126",
-      "pct": -0.09,
-      "reasons": [
-        "关注标的",
-        "半导体材料板块",
-        "低吸条件满足"
-      ],
-      "sector": "",
-      "score": 33,
-      "close": 23.43,
-      "turnover": 1.18
+      "close": 227.04,
+      "turnover": 6.05
     },
     {
       "name": "新易盛",
       "code": "300502",
-      "pct": -0.5,
+      "pct": 0.32,
       "reasons": [
         "关注标的",
         "光模块/CPO板块",
@@ -82,13 +26,13 @@
       ],
       "sector": "",
       "score": 33,
-      "close": 384.76,
-      "turnover": 2.08
+      "close": 386.0,
+      "turnover": 2.39
     },
     {
       "name": "中际旭创",
       "code": "300308",
-      "pct": -1.14,
+      "pct": 0.12,
       "reasons": [
         "关注标的",
         "光模块/CPO板块",
@@ -96,101 +40,153 @@
       ],
       "sector": "",
       "score": 33,
-      "close": 813.0,
-      "turnover": 1.95
+      "close": 814.0,
+      "turnover": 1.9
     },
     {
-      "name": "沪电股份",
-      "code": "002463",
-      "pct": -1.66,
+      "name": "江丰电子",
+      "code": "300666",
+      "pct": -3.22,
       "reasons": [
-        "关注标的",
-        "PCB板块",
-        "低吸条件满足"
+        "核心标的",
+        "半导体材料板块"
       ],
       "sector": "",
       "score": 33,
-      "close": 116.42,
-      "turnover": 1.67
+      "close": 220.18,
+      "turnover": 3.87
+    },
+    {
+      "name": "鼎龙股份",
+      "code": "300054",
+      "pct": -3.37,
+      "reasons": [
+        "核心标的",
+        "半导体材料板块"
+      ],
+      "sector": "",
+      "score": 33,
+      "close": 66.2,
+      "turnover": 3.02
+    },
+    {
+      "name": "沪硅产业",
+      "code": "688126",
+      "pct": -3.59,
+      "reasons": [
+        "关注标的",
+        "半导体材料板块"
+      ],
+      "sector": "",
+      "score": 23,
+      "close": 22.59,
+      "turnover": 1.77
     },
     {
       "name": "长飞光纤",
       "code": "601869",
-      "pct": -3.52,
+      "pct": -3.73,
       "reasons": [
         "关注标的",
         "光纤光缆板块"
       ],
       "sector": "",
       "score": 23,
-      "close": 393.46,
-      "turnover": 2.92
+      "close": 378.8,
+      "turnover": 2.46
+    },
+    {
+      "name": "沪电股份",
+      "code": "002463",
+      "pct": -4.23,
+      "reasons": [
+        "关注标的",
+        "PCB板块"
+      ],
+      "sector": "",
+      "score": 23,
+      "close": 111.5,
+      "turnover": 2.57
+    },
+    {
+      "name": "神工股份",
+      "code": "688233",
+      "pct": -5.02,
+      "reasons": [
+        "关注标的",
+        "半导体材料板块"
+      ],
+      "sector": "",
+      "score": 23,
+      "close": 93.18,
+      "turnover": 4.25
     }
   ],
   "fl": [
     {
+      "name": "利欧股份",
+      "code": "002131",
+      "pct": 2.78,
+      "reasons": [
+        "卫星标的",
+        "AI智能体板块",
+        "突破条件满足"
+      ],
+      "sector": "",
+      "score": 33,
+      "close": 4.81,
+      "turnover": 11.91
+    },
+    {
       "name": "航天电子",
       "code": "600879",
-      "pct": -1.1,
+      "pct": -0.07,
       "reasons": [
         "核心标的",
         "商业航天板块"
       ],
       "sector": "",
       "score": 33,
-      "close": 14.39,
-      "turnover": 1.34
+      "close": 14.38,
+      "turnover": 1.86
     },
     {
       "name": "张江高科",
       "code": "600895",
-      "pct": -0.51,
+      "pct": 1.26,
       "reasons": [
         "核心标的"
       ],
       "sector": "",
       "score": 25,
-      "close": 29.45,
-      "turnover": 0.89
+      "close": 29.82,
+      "turnover": 1.43
     },
     {
       "name": "南兴股份",
       "code": "002757",
-      "pct": 0.45,
+      "pct": 0.22,
       "reasons": [
         "卫星标的",
         "AI智能体板块"
       ],
       "sector": "",
       "score": 23,
-      "close": 18.05,
-      "turnover": 7.9
+      "close": 18.09,
+      "turnover": 14.45
     },
     {
       "name": "创新医疗",
       "code": "002173",
-      "pct": 0.16,
+      "pct": -0.97,
       "reasons": [
         "卫星标的",
         "脑机接口板块"
       ],
       "sector": "",
       "score": 23,
-      "close": 18.58,
-      "turnover": 4.44
-    },
-    {
-      "name": "利欧股份",
-      "code": "002131",
-      "pct": -2.3,
-      "reasons": [
-        "卫星标的",
-        "AI智能体板块"
-      ],
-      "sector": "",
-      "score": 23,
-      "close": 4.68,
-      "turnover": 7.74
+      "close": 18.4,
+      "turnover": 6.48
     },
     {
       "name": "盛景微",
@@ -201,8 +197,8 @@
       ],
       "sector": "半导体",
       "score": 3,
-      "close": 43.7,
-      "turnover": 9.33
+      "close": 43.4,
+      "turnover": 5.17
     },
     {
       "name": "瑞芯微",
@@ -213,8 +209,8 @@
       ],
       "sector": "半导体",
       "score": 3,
-      "close": 193.9,
-      "turnover": 2.62
+      "close": 189.0,
+      "turnover": 2.96
     },
     {
       "name": "博通集成",
@@ -225,69 +221,54 @@
       ],
       "sector": "半导体",
       "score": 3,
-      "close": 40.87,
-      "turnover": 6.12
-    },
-    {
-      "name": "英集芯",
-      "code": "688209",
-      "pct": 19.983753204345703,
-      "reasons": [
-        "复盘出现: 半导体"
-      ],
-      "sector": "半导体",
-      "score": 3,
-      "close": 33.29,
-      "turnover": 9.53
+      "close": 39.7,
+      "turnover": 6.17
     }
   ],
   "xjt": [
     {
-      "name": "江波龙",
-      "code": "301308",
-      "pct": -0.74,
-      "reasons": [
-        "核心标的",
-        "存储模组板块",
-        "低吸条件满足"
-      ],
-      "sector": "",
-      "score": 43,
-      "close": 359.63,
-      "turnover": 2.25
-    },
-    {
       "name": "佰维存储",
       "code": "688525",
-      "pct": -0.8,
+      "pct": -3.27,
       "reasons": [
         "核心标的",
-        "存储模组板块",
-        "低吸条件满足"
+        "存储模组板块"
       ],
       "sector": "",
-      "score": 43,
-      "close": 220.5,
-      "turnover": 2.51
+      "score": 33,
+      "close": 213.29,
+      "turnover": 3.53
     },
     {
       "name": "德明利",
       "code": "001309",
-      "pct": -1.91,
+      "pct": -3.4,
       "reasons": [
         "核心标的",
-        "存储模组板块",
-        "低吸条件满足"
+        "存储模组板块"
       ],
       "sector": "",
-      "score": 43,
-      "close": 405.06,
-      "turnover": 5.34
+      "score": 33,
+      "close": 391.3,
+      "turnover": 6.18
+    },
+    {
+      "name": "江波龙",
+      "code": "301308",
+      "pct": -3.51,
+      "reasons": [
+        "核心标的",
+        "存储模组板块"
+      ],
+      "sector": "",
+      "score": 33,
+      "close": 347.0,
+      "turnover": 3.32
     },
     {
       "name": "晶方科技",
       "code": "603005",
-      "pct": -0.07,
+      "pct": -1.87,
       "reasons": [
         "HBM/先进封装板块",
         "EUV光刻机国产化板块",
@@ -295,96 +276,82 @@
       ],
       "sector": "",
       "score": 26,
-      "close": 29.45,
-      "turnover": 3.64
+      "close": 28.9,
+      "turnover": 4.05
     }
   ],
   "sai": [
     {
       "name": "新易盛",
       "code": "300502",
-      "pct": -0.5,
+      "pct": 0.32,
       "reasons": [
         "核心标的",
         "光模块/CPO板块"
       ],
       "sector": "",
       "score": 33,
-      "close": 384.76,
-      "turnover": 2.08
+      "close": 386.0,
+      "turnover": 2.39
     },
     {
       "name": "中际旭创",
       "code": "300308",
-      "pct": -1.14,
+      "pct": 0.12,
       "reasons": [
         "核心标的",
         "光模块/CPO板块"
       ],
       "sector": "",
       "score": 33,
-      "close": 813.0,
-      "turnover": 1.95
+      "close": 814.0,
+      "turnover": 1.9
     },
     {
       "name": "沪电股份",
       "code": "002463",
-      "pct": -1.66,
+      "pct": -4.23,
       "reasons": [
         "核心标的",
         "PCB/高速板材板块"
       ],
       "sector": "",
       "score": 33,
-      "close": 116.42,
-      "turnover": 1.67
-    },
-    {
-      "name": "沪硅产业",
-      "code": "688126",
-      "pct": -0.09,
-      "reasons": [
-        "卫星标的",
-        "半导体设备/材料板块"
-      ],
-      "sector": "",
-      "score": 23,
-      "close": 23.43,
-      "turnover": 1.18
+      "close": 111.5,
+      "turnover": 2.57
     },
     {
       "name": "拓荆科技",
       "code": "688072",
-      "pct": -0.51,
+      "pct": -2.98,
       "reasons": [
         "卫星标的",
         "半导体设备/材料板块"
       ],
       "sector": "",
       "score": 23,
-      "close": 641.04,
-      "turnover": 0.98
+      "close": 621.93,
+      "turnover": 1.46
+    },
+    {
+      "name": "沪硅产业",
+      "code": "688126",
+      "pct": -3.59,
+      "reasons": [
+        "卫星标的",
+        "半导体设备/材料板块"
+      ],
+      "sector": "",
+      "score": 23,
+      "close": 22.59,
+      "turnover": 1.77
     }
   ],
   "wj": [
     {
-      "name": "中钨高新",
-      "code": "000657",
-      "pct": 0.42,
-      "reasons": [
-        "核心标的",
-        "钨矿/有色金属板块",
-        "低吸条件满足"
-      ],
-      "sector": "",
-      "score": 43,
-      "close": 60.02,
-      "turnover": 2.77
-    },
-    {
       "name": "胜宏科技",
       "code": "300476",
-      "pct": -1.19,
+      "pct": -1.35,
       "reasons": [
         "核心标的",
         "PCB板块",
@@ -392,27 +359,13 @@
       ],
       "sector": "",
       "score": 43,
-      "close": 222.5,
-      "turnover": 2.31
-    },
-    {
-      "name": "德明利",
-      "code": "001309",
-      "pct": -1.91,
-      "reasons": [
-        "核心标的",
-        "存储芯片板块",
-        "低吸条件满足"
-      ],
-      "sector": "",
-      "score": 43,
-      "close": 405.06,
-      "turnover": 5.34
+      "close": 219.5,
+      "turnover": 2.48
     },
     {
       "name": "兆龙互连",
       "code": "300913",
-      "pct": -1.64,
+      "pct": -1.67,
       "reasons": [
         "卫星标的",
         "铜缆高速连接板块",
@@ -420,13 +373,13 @@
       ],
       "sector": "",
       "score": 33,
-      "close": 35.42,
-      "turnover": 1.98
+      "close": 34.83,
+      "turnover": 2.5
     },
     {
       "name": "利通电子",
       "code": "603629",
-      "pct": -2.96,
+      "pct": -2.92,
       "reasons": [
         "卫星标的",
         "算力租赁板块",
@@ -434,13 +387,39 @@
       ],
       "sector": "",
       "score": 33,
-      "close": 111.61,
-      "turnover": 6.31
+      "close": 108.35,
+      "turnover": 6.26
+    },
+    {
+      "name": "德明利",
+      "code": "001309",
+      "pct": -3.4,
+      "reasons": [
+        "核心标的",
+        "存储芯片板块"
+      ],
+      "sector": "",
+      "score": 33,
+      "close": 391.3,
+      "turnover": 6.18
+    },
+    {
+      "name": "中钨高新",
+      "code": "000657",
+      "pct": -3.97,
+      "reasons": [
+        "核心标的",
+        "钨矿/有色金属板块"
+      ],
+      "sector": "",
+      "score": 33,
+      "close": 57.64,
+      "turnover": 3.9
     },
     {
       "name": "沃尔核材",
       "code": "002130",
-      "pct": 2.16,
+      "pct": 0.82,
       "reasons": [
         "观察标的",
         "铜缆高速连接板块",
@@ -448,35 +427,21 @@
       ],
       "sector": "",
       "score": 26,
-      "close": 17.03,
-      "turnover": 3.31
-    },
-    {
-      "name": "瑞可达",
-      "code": "688800",
-      "pct": -0.22,
-      "reasons": [
-        "观察标的",
-        "铜缆高速连接板块",
-        "低吸条件满足"
-      ],
-      "sector": "",
-      "score": 26,
-      "close": 60.17,
-      "turnover": 2.89
+      "close": 17.17,
+      "turnover": 3.92
     },
     {
       "name": "欢瑞世纪",
       "code": "000892",
-      "pct": -2.31,
+      "pct": 10.04,
       "reasons": [
         "卫星标的",
         "seedance/AI应用板块"
       ],
       "sector": "",
       "score": 23,
-      "close": 5.08,
-      "turnover": 40.47
+      "close": 5.59,
+      "turnover": 43.85
     },
     {
       "name": "芒果超媒",
@@ -487,8 +452,8 @@
       ],
       "sector": "数字媒体",
       "score": 3,
-      "close": 20.15,
-      "turnover": 20.97
+      "close": 21.25,
+      "turnover": 23.74
     },
     {
       "name": "掌阅科技",
@@ -499,38 +464,23 @@
       ],
       "sector": "数字媒体",
       "score": 3,
-      "close": 23.29,
-      "turnover": 15.09
+      "close": 24.0,
+      "turnover": 13.0
     }
   ],
   "tl": [
     {
       "name": "中钨高新",
       "code": "000657",
-      "pct": 0.42,
+      "pct": -3.97,
       "reasons": [
         "核心标的",
-        "钨矿/PCB钻针板块",
-        "低吸条件满足"
+        "钨矿/PCB钻针板块"
       ],
       "sector": "",
-      "score": 43,
-      "close": 60.02,
-      "turnover": 2.77
-    },
-    {
-      "name": "沪电股份",
-      "code": "002463",
-      "pct": -1.66,
-      "reasons": [
-        "观察标的",
-        "PCB板块",
-        "低吸条件满足"
-      ],
-      "sector": "",
-      "score": 26,
-      "close": 116.42,
-      "turnover": 1.67
+      "score": 33,
+      "close": 57.64,
+      "turnover": 3.9
     },
     {
       "name": "诺德股份",
@@ -541,101 +491,148 @@
       ],
       "sector": "电池",
       "score": 3,
-      "close": 11.41,
-      "turnover": 8.65
+      "close": 11.03,
+      "turnover": 8.03
     }
   ],
   "mao": [
     {
       "name": "美的集团",
       "code": "000333",
-      "pct": 0.31,
+      "pct": 0.37,
       "reasons": [
         "核心标的",
         "消费（家电/白酒）板块"
       ],
       "sector": "",
       "score": 33,
-      "close": 87.25,
-      "turnover": 0.22
+      "close": 87.57,
+      "turnover": 0.26
     },
     {
       "name": "润泽科技",
       "code": "300442",
-      "pct": 0.0,
+      "pct": -2.3,
       "reasons": [
         "核心标的",
         "数据中心/AIDC板块"
       ],
       "sector": "",
       "score": 33,
-      "close": 64.41,
-      "turnover": 0.88
+      "close": 62.93,
+      "turnover": 1.12
     },
     {
       "name": "寒武纪",
       "code": "688256",
-      "pct": -0.72,
+      "pct": -2.54,
       "reasons": [
         "核心标的",
         "半导体（存储/设备/材料）板块"
       ],
       "sector": "",
       "score": 33,
-      "close": 1099.99,
-      "turnover": 1.03
+      "close": 1072.0,
+      "turnover": 1.32
     },
     {
       "name": "长川科技",
       "code": "300604",
-      "pct": -1.09,
+      "pct": -5.71,
       "reasons": [
         "核心标的",
         "半导体（存储/设备/材料）板块"
       ],
       "sector": "",
       "score": 33,
-      "close": 269.63,
-      "turnover": 3.15
-    },
-    {
-      "name": "信维通信",
-      "code": "300136",
-      "pct": -0.72,
-      "reasons": [
-        "卫星标的",
-        "趋势跟随条件满足"
-      ],
-      "sector": "",
-      "score": 25,
-      "close": 57.65,
-      "turnover": 3.25
+      "close": 254.23,
+      "turnover": 4.11
     },
     {
       "name": "卫星化学",
       "code": "002648",
-      "pct": 0.58,
+      "pct": -0.4,
       "reasons": [
         "卫星标的",
         "化工板块"
       ],
       "sector": "",
       "score": 23,
-      "close": 27.65,
-      "turnover": 1.0
+      "close": 27.54,
+      "turnover": 0.99
     },
     {
       "name": "中科曙光",
       "code": "603019",
-      "pct": -1.1,
+      "pct": -1.97,
       "reasons": [
         "卫星标的",
         "数据中心/AIDC板块"
       ],
       "sector": "",
       "score": 23,
-      "close": 84.35,
-      "turnover": 1.42
+      "close": 82.69,
+      "turnover": 2.3
+    },
+    {
+      "name": "楚天龙",
+      "code": "003040",
+      "pct": 10.0,
+      "reasons": [
+        "复盘出现: 设备"
+      ],
+      "sector": "通信设备",
+      "score": 3,
+      "close": 21.12,
+      "turnover": 10.8
+    },
+    {
+      "name": "爱仕达",
+      "code": "002403",
+      "pct": 10.04878044128418,
+      "reasons": [
+        "复盘出现: 家电"
+      ],
+      "sector": "小家电",
+      "score": 3,
+      "close": 11.28,
+      "turnover": 4.09
+    },
+    {
+      "name": "会稽山",
+      "code": "601579",
+      "pct": 10.009140968322754,
+      "reasons": [
+        "复盘出现: 白酒"
+      ],
+      "sector": "非白酒",
+      "score": 3,
+      "close": 24.07,
+      "turnover": 3.52
+    },
+    {
+      "name": "古越龙山",
+      "code": "600059",
+      "pct": 10.059880256652832,
+      "reasons": [
+        "复盘出现: 白酒"
+      ],
+      "sector": "非白酒",
+      "score": 3,
+      "close": 9.19,
+      "turnover": 7.91
+    },
+    {
+      "name": "天沃科技",
+      "code": "002564",
+      "pct": 10.044642448425293,
+      "reasons": [
+        "复盘出现: 设备"
+      ],
+      "sector": "专用设备",
+      "score": 3,
+      "close": 4.93,
+      "turnover": 1.9
     },
     {
       "name": "太阳电缆",
@@ -646,8 +643,8 @@
       ],
       "sector": "电网设备",
       "score": 3,
-      "close": 8.39,
-      "turnover": 8.29
+      "close": 8.03,
+      "turnover": 19.48
     },
     {
       "name": "金帝股份",
@@ -658,8 +655,8 @@
       ],
       "sector": "通用设备",
       "score": 3,
-      "close": 34.95,
-      "turnover": 12.77
+      "close": 33.37,
+      "turnover": 48.41
     },
     {
       "name": "华盛昌",
@@ -670,20 +667,8 @@
       ],
       "sector": "电网设备",
       "score": 3,
-      "close": 106.66,
-      "turnover": 14.67
-    },
-    {
-      "name": "爱仕达",
-      "code": "002403",
-      "pct": 9.978541374206543,
-      "reasons": [
-        "复盘出现: 家电"
-      ],
-      "sector": "小家电",
-      "score": 3,
-      "close": 10.25,
-      "turnover": 2.65
+      "close": 107.36,
+      "turnover": 17.64
     },
     {
       "name": "白银有色",
@@ -694,8 +679,8 @@
       ],
       "sector": "工业金属",
       "score": 3,
-      "close": 7.33,
-      "turnover": 7.95
+      "close": 7.3,
+      "turnover": 7.01
     },
     {
       "name": "宏盛股份",
@@ -706,8 +691,8 @@
       ],
       "sector": "通用设备",
       "score": 3,
-      "close": 44.35,
-      "turnover": 15.0
+      "close": 42.45,
+      "turnover": 15.65
     },
     {
       "name": "大元泵业",
@@ -718,8 +703,8 @@
       ],
       "sector": "通用设备",
       "score": 3,
-      "close": 79.44,
-      "turnover": 9.61
+      "close": 72.41,
+      "turnover": 10.56
     },
     {
       "name": "华昌化工",
@@ -730,8 +715,8 @@
       ],
       "sector": "化学原料",
       "score": 3,
-      "close": 6.43,
-      "turnover": 12.27
+      "close": 6.12,
+      "turnover": 8.62
     },
     {
       "name": "石化机械",
@@ -743,7 +728,7 @@
       "sector": "专用设备",
       "score": 3,
       "close": 5.58,
-      "turnover": 8.31
+      "turnover": 4.13
     },
     {
       "name": "远东股份",
@@ -754,44 +739,8 @@
       ],
       "sector": "电网设备",
       "score": 3,
-      "close": 21.05,
-      "turnover": 16.72
-    },
-    {
-      "name": "雪人集团",
-      "code": "002639",
-      "pct": 10.033166885375977,
-      "reasons": [
-        "复盘出现: 设备"
-      ],
-      "sector": "通用设备",
-      "score": 3,
-      "close": 14.07,
-      "turnover": 28.13
-    },
-    {
-      "name": "智新电子",
-      "code": "920212",
-      "pct": 29.95391845703125,
-      "reasons": [
-        "复盘出现: 消费"
-      ],
-      "sector": "消费电子",
-      "score": 3,
-      "close": 0,
-      "turnover": 19.49669075012207
-    },
-    {
-      "name": "国晟科技",
-      "code": "603778",
-      "pct": 10.030706405639648,
-      "reasons": [
-        "复盘出现: 设备"
-      ],
-      "sector": "光伏设备",
-      "score": 3,
-      "close": 10.51,
-      "turnover": 18.75
+      "close": 21.2,
+      "turnover": 15.44
     }
   ]
 }
